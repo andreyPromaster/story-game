@@ -15,3 +15,8 @@ class Node(BaseModel):
 
 class NodeList(BaseModel):
     nodes: List[Node] = []
+
+
+class Story(BaseModel):
+    id: str
+    root: str
