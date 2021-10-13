@@ -1,7 +1,7 @@
 import abc
 import json
 
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, AttributeExists
 
 
 class DataDriver(abc.ABC):
@@ -30,11 +30,10 @@ class DynamoDBDriver(DataDriver):
         return items
 
     def get_node(self, story_id: str, uri: str):
-        response = self.connection.get_item(Key={
-            "id": story_id,
-            "nodes": uri,
-        }
-        )
+        response = self.connection.query(KeyConditionExpression=Key("id").eq(story_id),
+                                         FilterExpression=AttributeExists(f"nodes.{uri}"),
+                                         ProjectionExpression=f"nodes.{uri}",
+                                         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             raise Exception(json.dumps(response))
 
