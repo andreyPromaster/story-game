@@ -4,11 +4,8 @@ repos:
     hooks:
       - id: trailing-whitespace
       - id: check-ast
-        types: [file, python]
       - id: end-of-file-fixer
-        types: [file, python]
       - id: mixed-line-ending
-        types: [file, python]
 
   - repo: https://github.com/PyCQA/flake8
     rev: 3.9.2
