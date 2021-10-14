@@ -32,6 +32,7 @@ class DynamoDBDriver(DataDriver):
 
         if response["Count"] == 1:
             return Story(**response["Items"][0])
+        return None
 
     def get_node(self, story_id: str, uri: str):
         response = self.connection.query(
@@ -44,5 +45,4 @@ class DynamoDBDriver(DataDriver):
 
         if response["Count"] == 1:
             return Node(**response["Items"][0]["nodes"][uri])
-        else:
-            return {}
+        return None
