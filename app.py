@@ -1,26 +1,9 @@
-import boto3
-from botocore.config import Config
+from flask import Flask
 
-from conf import settings
-from entities.connection import DynamoDBDriver
+from api.story import story_api
 
-
-def test():
-    conf = Config(retries={"max_attempts": 1, "mode": "standard"})
-
-    conn = boto3.resource(
-        "dynamodb",
-        endpoint_url=f"http://{settings.DYNAMODB_HOST}:{settings.DYNAMODB_PORT}",
-        config=conf,
-        region_name=settings.REGION,
-    )
-
-    source = DynamoDBDriver(conn)
-    node = source.get_node("test", "Root")
-    print(node)
-    story = source.get_story("test")
-    print(story)
-
+app = Flask(__name__)
+app.register_blueprint(story_api, url_prefix="/api")
 
 if __name__ == "__main__":
-    test()
+    app.run()
