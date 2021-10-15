@@ -1,0 +1,32 @@
+{
+  "id": "test1",
+  "root": "Root",
+  "nodes": {
+    "Root": {
+      "options": [
+        {
+          "next": "Branch1-test1",
+          "text": "br1"
+        },
+        {
+          "next": "Branch2-test1",
+          "text": "br2"
+        }
+      ],
+      "text": "root"
+    },
+    "Root1": {
+      "options": [
+        {
+          "next": "Branch1",
+          "text": "br1"
+        },
+        {
+          "next": "Branch2",
+          "text": "br2"
+        }
+      ],
+      "text": "root1"
+    }
+  }
+}
