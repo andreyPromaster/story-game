@@ -11,12 +11,11 @@ from utilities.exceptions import DynamoDBError
 
 
 def _get_connection():
-    conf = Config(retries={"max_attempts": 1, "mode": "standard"})
-
+    config = Config(retries={"max_attempts": 1, "mode": "standard"})
     conn = boto3.resource(
         "dynamodb",
         endpoint_url=settings.DYNAMODB_URL,
-        config=conf,
+        config=config,
         region_name=settings.REGION,
     )
     return conn
