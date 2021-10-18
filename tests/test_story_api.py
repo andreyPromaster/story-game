@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 import boto3
 from moto import mock_dynamodb2
 
+from app import app
 from entities.data_source import DynamoDBDriver
 from entities.schemas import Node
 from utilities.exceptions import DynamoDBError
@@ -44,6 +45,7 @@ class StoryDynamoDBTest(unittest.TestCase):
             self.test_data = json.load(file)
         self.client.Table(self.TABLE_NAME).put_item(Item=self.test_data)
         self.story_data_source = DynamoDBDriver(self.client)
+        self.app = app.test_client()
 
     def tearDown(self):
         self.mock_dynamodb.stop()
@@ -72,3 +74,12 @@ class StoryDynamoDBTest(unittest.TestCase):
     def test_get_not_exist_node(self):
         node = self.story_data_source.get_node("test_id", "not_exist_id")
         self.assertIsNone(node)
+
+    @patch("entities.data_source.get_data_source")
+    def test_get_story_list(self, mocker):
+        mocker.return_value = self.client
+        data = self.app.get("api/story")
+        assert data.status_code == 200
+        assert data.get_json() == {
+            key: value for key, value in self.test_data.items() if key in ("id", "root")
+        }
