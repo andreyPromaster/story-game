@@ -62,9 +62,8 @@ class StoryDynamoDBTest(unittest.TestCase):
         self.story_data_source.connection.query.return_value = {
             "ResponseMetadata": {"HTTPStatusCode": 404}
         }
-        with self.assertRaises(DynamoDBError) as context:
+        with self.assertRaises(DynamoDBError):
             self.story_data_source.get_story("test_id")
-        self.assertTrue("This is broken" in str(context.exception))
 
     def test_get_node(self):
         node = self.story_data_source.get_node("test_id", "Root")
