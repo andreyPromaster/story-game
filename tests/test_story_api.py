@@ -75,11 +75,51 @@ class StoryDynamoDBTest(unittest.TestCase):
         node = self.story_data_source.get_node("test_id", "not_exist_id")
         self.assertIsNone(node)
 
-    @patch("entities.data_source.get_data_source")
-    def test_get_story_list(self, mocker):
-        mocker.return_value = self.client
+    @patch("api.story.data_source.get_story_list")
+    def test_api_get_story_list(self, mocker):
+        mocker.return_value = self.story_data_source.get_story_list()
         data = self.app.get("api/story")
         assert data.status_code == 200
+        assert data.get_json() == [
+            {
+                key: value
+                for key, value in self.test_data.items()
+                if key in ("id", "root")
+            }
+        ]
+
+    @patch("api.story.data_source.get_node")
+    def test_api_get_story_node(self, mocker):
+        story_id, node_id = "test_id", "Root"
+        mocker.return_value = self.story_data_source.get_node(story_id, node_id)
+        data = self.app.get(f"api/story/{story_id}/nodes/{node_id}")
+        assert data.status_code == 200
         assert data.get_json() == {
-            key: value for key, value in self.test_data.items() if key in ("id", "root")
+            "options": [
+                {"next": "Branch1-test1", "text": "br1"},
+                {"next": "Branch2-test1", "text": "br2"},
+            ],
+            "text": "root",
         }
+
+    @patch("api.story.data_source.get_node")
+    def test_api_get_not_exist_story_node(self, mocker):
+        story_id, node_id = "test_id", "not_exist"
+        mocker.return_value = self.story_data_source.get_node(story_id, node_id)
+        data = self.app.get(f"api/story/{story_id}/nodes/{node_id}")
+        assert data.status_code == 404
+
+    @patch("api.story.data_source.get_story")
+    def test_api_get_story(self, mocker):
+        story_id = "test_id"
+        mocker.return_value = self.story_data_source.get_story(story_id)
+        data = self.app.get(f"api/story/{story_id}")
+        assert data.status_code == 200
+        assert data.get_json() == {"id": "test_id", "root": "Root"}
+
+    @patch("api.story.data_source.get_story")
+    def test_api_get_not_exist_story(self, mocker):
+        story_id = "not_found"
+        mocker.return_value = self.story_data_source.get_story(story_id)
+        data = self.app.get(f"api/story/{story_id}")
+        assert data.status_code == 404
