@@ -12,7 +12,7 @@ from utilities.exceptions import DynamoDBError
 
 def _get_connection():
     config = Config(retries={"max_attempts": 1, "mode": "standard"})
-    if settings.IS_OFFLINE:
+    if settings.LOCAL:
         conn = boto3.resource(
             "dynamodb",
             endpoint_url=settings.DYNAMODB_URL,

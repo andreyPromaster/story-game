@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     STORY_TABLE_NAME: str = "stories"
     DYNAMODB_URL: str = "http://127.0.0.1:8000"
     DATA_SOURCE: str = "dynamodb"
-    IS_OFFLINE: int = 1
+    LOCAL: int = 1
 
 
 settings = Settings()

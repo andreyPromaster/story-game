@@ -5,6 +5,13 @@ service: serverless-flask
 plugins:
   - serverless-python-requirements
   - serverless-wsgi
+  - serverless-dynamodb-local
+  - serverless-offline
+
+package:
+  exclude:
+    - node_modules/**
+
 custom:
   tableName: 'stories-table-${self:provider.stage}'
   dynamodb:
@@ -35,7 +42,7 @@ provider:
         - { "Fn::GetAtt": ["StoryDynamoDBTable", "Arn" ] }
   environment:
     STORY_TABLE_NAME: ${self:custom.tableName}
-    IS_OFFLINE: 0
+    LOCAL: 0
 
 functions:
   app:
