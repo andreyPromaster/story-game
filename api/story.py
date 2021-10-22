@@ -18,7 +18,7 @@ def get_story(story_id):
 @story_api.route("/story")
 def list_story():
     stories = data_source.get_story_list()
-    return jsonify(stories)
+    return jsonify(stories.dict())
 
 
 @story_api.route("/story/<string:story_id>/nodes/<string:uri>")

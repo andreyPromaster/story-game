@@ -20,3 +20,7 @@ class NodeList(BaseModel):
 class Story(BaseModel):
     id: str
     root: str
+
+
+class StoryList(BaseModel):
+    stories: List[Story] = []

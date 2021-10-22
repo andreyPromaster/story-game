@@ -6,7 +6,7 @@ from boto3.dynamodb.conditions import Key
 from botocore.config import Config
 
 from conf import settings
-from entities.schemas import Node, Story
+from entities.schemas import Node, Story, StoryList
 from utilities.exceptions import DynamoDBError
 
 
@@ -77,7 +77,7 @@ class DynamoDBDriver(DataDriver):
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             raise DynamoDBError(json.dumps(response))
-        return response["Items"]
+        return StoryList(stories=response["Items"])
 
 
 def get_data_source() -> DataDriver:
