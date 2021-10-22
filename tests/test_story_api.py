@@ -80,13 +80,15 @@ class StoryDynamoDBTest(unittest.TestCase):
         mocker.return_value = self.story_data_source.get_story_list()
         data = self.app.get("api/story")
         assert data.status_code == 200
-        assert data.get_json() == [
-            {
-                key: value
-                for key, value in self.test_data.items()
-                if key in ("id", "root")
-            }
-        ]
+        assert data.get_json() == {
+            "stories": [
+                {
+                    key: value
+                    for key, value in self.test_data.items()
+                    if key in ("id", "root")
+                }
+            ]
+        }
 
     @patch("api.story.data_source.get_node")
     def test_api_get_story_node(self, mocker):
