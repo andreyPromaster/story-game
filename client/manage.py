@@ -12,7 +12,7 @@ from entities.schemas import Node
 def get_user_input():
     while True:
         try:
-            user_input = input()
+            user_input = input("Enter record number: ")
             if str(user_input) == "exit":
                 raise ExitException
             user_choice = int(user_input)
