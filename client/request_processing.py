@@ -18,6 +18,8 @@ class RequestManager:
             return Story(**data)
 
     async def get_node(self, story_id, node_id):
-        async with self.session.get(f"{API_URL}/story/{story_id}") as response:
+        async with self.session.get(
+            f"{API_URL}/story/{story_id}/nodes/{node_id}"
+        ) as response:
             data = await response.json()
             return Node(**data)
