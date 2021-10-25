@@ -73,12 +73,13 @@ async def start_game():
             next_node = selected_story.root
             while True:
                 node = await manage_story_node(
-                    request_manager, selected_story.id, next_node.next
+                    request_manager, selected_story.id, next_node
                 )
-                next_node = node
                 if node is None:
                     print("Story has ended!")
                     break
+                next_node = node.next
+
         except ExitException:
             print("Goodbuy")
 
