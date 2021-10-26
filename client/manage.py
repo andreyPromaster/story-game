@@ -61,7 +61,8 @@ async def manage_story_node(request_manager, story_id, node_id):
     except ClientResponseError:
         return None
     show_story_node(data)
-    return get_list_row(data.options)
+    option = get_list_row(data.options)
+    return option
 
 
 async def start_game():
@@ -72,13 +73,13 @@ async def start_game():
             print("____Story starts____")
             next_node = selected_story.root
             while True:
-                node = await manage_story_node(
+                option = await manage_story_node(
                     request_manager, selected_story.id, next_node
                 )
-                if node is None:
+                if option is None or option.next is None:
                     print("Story has ended!")
                     break
-                next_node = node.next
+                next_node = option.next
 
         except ExitException:
             print("Goodbuy")
