@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class Option(BaseModel):
     text: str
-    next: str
+    next: str = None
 
 
 class Node(BaseModel):
