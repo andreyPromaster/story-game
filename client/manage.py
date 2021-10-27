@@ -13,7 +13,7 @@ def get_user_input():
     while True:
         try:
             user_input = input("Enter record number: ")
-            if str(user_input) == "exit":
+            if user_input == "exit":
                 raise ExitException
             user_choice = int(user_input)
             return user_choice - 1
@@ -24,19 +24,14 @@ def get_user_input():
 def get_list_row(data: List):
     while True:
         choice = get_user_input()
-        if choice >= 0:
-            try:
-                row = data[choice]
-                return row
-            except IndexError:
-                print("Input out of data range!")
-        else:
-            print("Input out of data range!")
+        if 0 <= choice < len(data):
+            return data[choice]
+        print("Input out of data range!")
 
 
 def show_stories(stories):
-    print("Available stories:")
     if stories:
+        print("Available stories:")
         for number, story in enumerate(stories, 1):
             print(f"{number}. {story.id}")
     else:
@@ -82,7 +77,7 @@ async def start_game():
                 next_node = option.next
 
         except ExitException:
-            print("Goodbuy")
+            print("Goodbye")
 
 
 if __name__ == "__main__":

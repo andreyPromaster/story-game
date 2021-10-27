@@ -1,6 +1,8 @@
+import os
+
 from entities.schemas import Node, Story, StoryList
 
-API_URL = "http://localhost:5000/api"
+API_URL = os.environ.get("API_URL", "http://localhost:5000/api")
 
 
 class RequestManager:
