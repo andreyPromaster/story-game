@@ -33,7 +33,7 @@ def show_stories(stories):
     if stories:
         print("Available stories:")
         for number, story in enumerate(stories, 1):
-            print(f"{number}. {story.id}")
+            print(f"{number}. {story.name}")
     else:
         print("Can't find any stories(")
 
