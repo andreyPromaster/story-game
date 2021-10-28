@@ -1,6 +1,7 @@
 {
   "id": "test1",
   "root": "Root",
+   "name": "First_story",
   "nodes": {
     "Root": {
       "options": [

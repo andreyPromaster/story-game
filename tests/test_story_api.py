@@ -85,7 +85,7 @@ class StoryDynamoDBTest(unittest.TestCase):
                 {
                     key: value
                     for key, value in self.test_data.items()
-                    if key in ("id", "root")
+                    if key in ("id", "root", "name")
                 }
             ]
         }
@@ -117,7 +117,11 @@ class StoryDynamoDBTest(unittest.TestCase):
         mocker.return_value = self.story_data_source.get_story(story_id)
         data = self.app.get(f"api/story/{story_id}")
         assert data.status_code == 200
-        assert data.get_json() == {"id": "test_id", "root": "Root"}
+        assert data.get_json() == {
+            "id": "test_id",
+            "root": "Root",
+            "name": "test_story",
+        }
 
     @patch("api.story.data_source.get_story")
     def test_api_get_not_exist_story(self, mocker):
