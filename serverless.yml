@@ -2,6 +2,8 @@
 
 service: serverless-flask
 
+useDotenv: true
+
 plugins:
   - serverless-python-requirements
   - serverless-wsgi
@@ -11,6 +13,7 @@ plugins:
 package:
   exclude:
     - node_modules/**
+    - .pytest_cache/**
 
 custom:
   tableName: 'stories-table-${self:provider.stage}'
@@ -28,8 +31,8 @@ custom:
 provider:
   name: aws
   runtime: python3.8
-  stage: dev
-  region: us-east-1
+  stage: ${env:STAGE}
+  region: ${env:REGION}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -42,7 +45,6 @@ provider:
         - { "Fn::GetAtt": ["StoryDynamoDBTable", "Arn" ] }
   environment:
     STORY_TABLE_NAME: ${self:custom.tableName}
-    LOCAL: 0
 
 functions:
   app:

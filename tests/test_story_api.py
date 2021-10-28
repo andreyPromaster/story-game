@@ -19,6 +19,7 @@ from utilities.exceptions import DynamoDBError
         "AWS_SECRET_ACCESS_KEY": "testing",
         "AWS_SECURITY_TOKEN": "testing",
         "AWS_SESSION_TOKEN": "testing",
+        "LOCAL": "1",
     },
     clear=True,
 )
