@@ -20,7 +20,7 @@ class NodeList(BaseModel):
 class Story(BaseModel):
     id: str
     root: str
-    name: str = ""
+    name: str
 
 
 class StoryList(BaseModel):
