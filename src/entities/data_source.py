@@ -49,7 +49,10 @@ class DynamoDBDriver(DataDriver):
     def get_story(self, story_id: str):
         response = self.connection.query(
             KeyConditionExpression=Key("id").eq(story_id),
-            ProjectionExpression="id, root, name",
+            ProjectionExpression="id, root, #name",
+            ExpressionAttributeNames={
+                "#name": "name"
+            },  # We should use an alias for any reserved word
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             raise DynamoDBError(json.dumps(response))
@@ -73,7 +76,8 @@ class DynamoDBDriver(DataDriver):
 
     def get_story_list(self):
         response = self.connection.scan(
-            ProjectionExpression="id, root, name",
+            ProjectionExpression="id, root, #name",
+            ExpressionAttributeNames={"#name": "name"},
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             raise DynamoDBError(json.dumps(response))

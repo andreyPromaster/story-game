@@ -23,7 +23,7 @@ custom:
     stages:
       - dev
   wsgi:
-    app: app.app
+    app: src/app.app
     packRequirements: false
   pythonRequirements:
     dockerizePip: non-linux
@@ -45,7 +45,7 @@ provider:
         - { "Fn::GetAtt": ["StoryDynamoDBTable", "Arn" ] }
   environment:
     STORY_TABLE_NAME: ${self:custom.tableName}
-    LOCAL: 0
+    LOCAL: 1
 
 functions:
   app:
