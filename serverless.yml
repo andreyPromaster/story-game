@@ -11,9 +11,10 @@ plugins:
   - serverless-offline
 
 package:
+  include:
+    - src/**
   exclude:
-    - node_modules/**
-    - .pytest_cache/**
+    - '**'
 
 custom:
   tableName: 'stories-table-${self:provider.stage}'
@@ -45,7 +46,7 @@ provider:
         - { "Fn::GetAtt": ["StoryDynamoDBTable", "Arn" ] }
   environment:
     STORY_TABLE_NAME: ${self:custom.tableName}
-    LOCAL: 1
+    LOCAL: 0
 
 functions:
   app:
