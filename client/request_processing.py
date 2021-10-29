@@ -2,9 +2,7 @@ import os
 
 from entities.schemas import Node, Story, StoryList
 
-API_URL = os.environ.get(
-    "API_URL", "https://j4nvwxv439.execute-api.us-east-1.amazonaws.com/dev/api"
-)
+API_URL = os.environ.get("API_URL", "http://127.0.0.1:5000/api")
 
 
 class RequestManager:
