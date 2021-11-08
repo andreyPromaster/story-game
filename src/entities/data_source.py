@@ -19,13 +19,12 @@ def _get_connection():
             config=config,
             region_name=settings.REGION,
         )
-        return conn
     else:
         conn = boto3.resource(
             "dynamodb",
             config=config,
         )
-        return conn
+    return conn
 
 
 class DataDriver(abc.ABC):
