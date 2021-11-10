@@ -9,8 +9,8 @@ from app import app
 from entities.data_source import DynamoDBDriver
 
 
-@pytest.fixture()
-def mock_db_session(aws_credentials):
+@pytest.fixture
+def mock_db_session(aws_credentials, test_data):
     mock_dynamodb = mock_dynamodb2()
     mock_dynamodb.start()
     TABLE_NAME = os.getenv("STORY_TABLE_NAME", "stories")
@@ -24,14 +24,18 @@ def mock_db_session(aws_credentials):
             {"AttributeName": "id", "AttributeType": "S"},
         ],
     )
-    with open("tests/test_data.json", "r") as file:
-        test_data = json.load(file)
     client.Table(TABLE_NAME).put_item(Item=test_data)
     yield DynamoDBDriver(client)
     mock_dynamodb.stop()
 
 
-@pytest.fixture()
+@pytest.fixture
+def test_data():
+    with open("tests/test_data.json", "r") as file:
+        test_data = json.load(file)
+
+
+@pytest.fixture
 def application_client():
     with app.test_client() as client:
         yield client
