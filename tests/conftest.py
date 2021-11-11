@@ -6,7 +6,7 @@ import pytest
 from moto import mock_dynamodb2
 
 from app import app
-from entities.data_source import DynamoDBDriver
+from common.entities.data_source import DynamoDBDriver
 
 
 @pytest.fixture
@@ -27,12 +27,6 @@ def mock_db_session(aws_credentials, test_data):
     client.Table(TABLE_NAME).put_item(Item=test_data)
     yield DynamoDBDriver(client)
     mock_dynamodb.stop()
-
-
-@pytest.fixture
-def test_data():
-    with open("tests/test_data.json", "r") as file:
-        test_data = json.load(file)
 
 
 @pytest.fixture

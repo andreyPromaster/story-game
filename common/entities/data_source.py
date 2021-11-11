@@ -5,8 +5,8 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from botocore.config import Config
 
+from common.entities.schemas import Node, Story, StoryList
 from conf import settings
-from entities.schemas import Node, Story, StoryList
 from utilities.exceptions import DynamoDBError
 
 

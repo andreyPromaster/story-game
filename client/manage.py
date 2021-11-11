@@ -1,12 +1,12 @@
-import asyncio
 from typing import List
 
 import aiohttp
 from aiohttp import ClientResponseError
-from exception import ExitException
-from request_processing import RequestManager
 
-from entities.schemas import Node
+from common.entities.schemas import Node
+
+from .exception import ExitException
+from .request_processing import RequestManager
 
 
 def get_user_input():
@@ -78,8 +78,3 @@ async def start_game():
 
         except ExitException:
             print("Goodbye")
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(start_game())

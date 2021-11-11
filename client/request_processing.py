@@ -1,6 +1,6 @@
 import os
 
-from entities.schemas import Node, Story, StoryList
+from common.entities.schemas import Node, Story, StoryList
 
 API_URL = os.environ.get("API_URL", "http://127.0.0.1:5000/api")
 
