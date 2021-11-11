@@ -8,7 +8,6 @@ from utilities.exceptions import DynamoDBError
 
 def test_get_story(mock_db_session, test_data):
     story = mock_db_session.get_story("test_id")
-    print(story.id, test_data)
     assert story.id == test_data["id"]
     assert story.root == test_data["root"]
 
