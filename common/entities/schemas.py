@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class Option(BaseModel):
     text: str
-    next: str
+    next: str = None
 
 
 class Node(BaseModel):
@@ -20,3 +20,8 @@ class NodeList(BaseModel):
 class Story(BaseModel):
     id: str
     root: str
+    name: str
+
+
+class StoryList(BaseModel):
+    stories: List[Story] = []

@@ -5,8 +5,8 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from botocore.config import Config
 
+from common.entities.schemas import Node, Story, StoryList
 from conf import settings
-from entities.schemas import Node, Story
 from utilities.exceptions import DynamoDBError
 
 
@@ -19,13 +19,12 @@ def _get_connection():
             config=config,
             region_name=settings.REGION,
         )
-        return conn
     else:
         conn = boto3.resource(
             "dynamodb",
             config=config,
         )
-        return conn
+    return conn
 
 
 class DataDriver(abc.ABC):
@@ -49,7 +48,10 @@ class DynamoDBDriver(DataDriver):
     def get_story(self, story_id: str):
         response = self.connection.query(
             KeyConditionExpression=Key("id").eq(story_id),
-            ProjectionExpression="id, root",
+            ProjectionExpression="id, root, #name",
+            ExpressionAttributeNames={
+                "#name": "name"
+            },  # We should use an alias for any reserved word
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             raise DynamoDBError(json.dumps(response))
@@ -73,11 +75,12 @@ class DynamoDBDriver(DataDriver):
 
     def get_story_list(self):
         response = self.connection.scan(
-            ProjectionExpression="id, root",
+            ProjectionExpression="id, root, #name",
+            ExpressionAttributeNames={"#name": "name"},
         )
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             raise DynamoDBError(json.dumps(response))
-        return response["Items"]
+        return StoryList(stories=response["Items"])
 
 
 def get_data_source() -> DataDriver:

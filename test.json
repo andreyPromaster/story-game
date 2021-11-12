@@ -1,15 +1,16 @@
 {
   "id": "test1",
   "root": "Root",
+  "name": "First_story",
   "nodes": {
     "Root": {
       "options": [
         {
-          "next": "Branch1-test1",
+          "next": "Branch1_test1",
           "text": "br1"
         },
         {
-          "next": "Branch2-test1",
+          "next": "Root1",
           "text": "br2"
         }
       ],

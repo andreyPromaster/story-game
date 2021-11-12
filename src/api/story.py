@@ -1,6 +1,6 @@
 from flask import Blueprint, abort, jsonify
 
-from entities.data_source import get_data_source
+from common.entities.data_source import get_data_source
 
 story_api = Blueprint("story_api_br", __name__)
 data_source = get_data_source()
@@ -18,7 +18,7 @@ def get_story(story_id):
 @story_api.route("/story")
 def list_story():
     stories = data_source.get_story_list()
-    return jsonify(stories)
+    return jsonify(stories.dict())
 
 
 @story_api.route("/story/<string:story_id>/nodes/<string:uri>")
