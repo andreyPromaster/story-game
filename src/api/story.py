@@ -1,6 +1,6 @@
 from flask import Blueprint, abort, jsonify
 
-from common.entities.data_source import get_data_source
+from data_storage.data_source import get_data_source
 
 story_api = Blueprint("story_api_br", __name__)
 data_source = get_data_source()
