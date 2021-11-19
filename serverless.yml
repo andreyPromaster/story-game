@@ -47,7 +47,7 @@ provider:
         - { "Fn::GetAtt": ["StoryDynamoDBTable", "Arn" ] }
   environment:
     STORY_TABLE_NAME: ${self:custom.tableName}
-    LOCAL: 1
+    LOCAL: 0
 
 functions:
   app:
