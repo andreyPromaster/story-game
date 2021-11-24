@@ -6,7 +6,7 @@ import pytest
 from moto import mock_dynamodb2
 
 from app import app
-from data_storage.data_source import DynamoDBDriver
+from data_storage.dynamo_db.data_source import DynamoDBDriver
 
 
 @pytest.fixture
