@@ -1,31 +1,9 @@
-import json
-import logging
-from functools import partial
-
-from pydantic.json import pydantic_encoder
-from sqlalchemy import VARCHAR, Column, ForeignKey, Integer, create_engine
+from sqlalchemy import VARCHAR, Column, ForeignKey, Integer
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
-from conf import settings
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-
-def get_connection():
-    # Setup Session and Client
-    logging.info("Getting database connection")
-    conn = create_engine(
-        f"postgresql://{settings.DB_USER}:{settings.DB_PASS}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}",
-        json_serializer=partial(json.dumps, default=pydantic_encoder),
-    )
-    logging.info("Database connection established")
-    return conn
-
+from data_storage.sqlalchemy.data_source import get_connection
 
 engine = get_connection()
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base(bind=engine)
 
 
