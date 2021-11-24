@@ -33,12 +33,6 @@ class Story(Base):
     __tablename__ = "story"
 
     id = Column(Integer, primary_key=True)
-    root = Column(
-        Integer,
-        ForeignKey("node.id", ondelete="CASCADE", use_alter=True),
-        nullable=False,
-        index=True,
-    )
     name = Column(VARCHAR(200), nullable=False)
 
 
@@ -48,11 +42,10 @@ class Node(Base):
     id = Column(Integer, primary_key=True)
     story = Column(
         Integer,
-        ForeignKey("story.id", ondelete="CASCADE", use_alter=True),
-        nullable=False,
-        index=True,
+        ForeignKey("story.id", ondelete="CASCADE"),
+        nullable=True,
     )
-    name = Column(VARCHAR(200), nullable=False)
+    name = Column(VARCHAR(200), nullable=False, index=True)
     text = Column(VARCHAR(200), nullable=False)
 
 
@@ -61,6 +54,7 @@ class Option(Base):
 
     id = Column(Integer, primary_key=True)
     next = Column(
-        Integer, ForeignKey("node.id", ondelete="CASCADE"), nullable=False, index=True
+        Integer, ForeignKey("node.id", ondelete="CASCADE"), nullable=True, index=True
     )
+    cur_node = Column(Integer, ForeignKey("node.id", ondelete="CASCADE"), index=True)
     text = Column(VARCHAR(200), nullable=False)
