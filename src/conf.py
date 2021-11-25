@@ -10,10 +10,10 @@ class Settings(BaseSettings):
 
     # RDS setting
     DB_USER: str = "postgres"
-    DB_HOST: str = "game-story.c37t98gwsylr.us-east-1.rds.amazonaws.com"
+    DB_HOST: str = ""
     DB_PORT: int = 5432
     DB_NAME: str = "game_story"
-    DB_PASS: str = "R48ZuijU6bDQFnH"
+    DB_PASS: str = ""
 
 
 settings = Settings()
