@@ -1,6 +1,7 @@
 import logging
 from functools import wraps
 
+from sqlalchemy.exc import DataError, NoResultFound
 from sqlalchemy.orm import sessionmaker
 
 from common.entities import schemas
@@ -20,6 +21,18 @@ def execute_query(method):
     return inner
 
 
+def handle_exception(method):
+    @wraps(method)
+    def inner(self, *args, **kwargs):
+        try:
+            data = method(self, *args, **kwargs)
+            return data
+        except (NoResultFound, DataError):
+            return None
+
+    return inner
+
+
 class RDSDriver(DataDriver):
     def __init__(self, session=None):
         if session is None:
@@ -29,6 +42,7 @@ class RDSDriver(DataDriver):
         else:
             self.session = session
 
+    @handle_exception
     @execute_query
     def get_story(self, story_id: str):
         story = (
@@ -42,6 +56,7 @@ class RDSDriver(DataDriver):
         )
         return schemas.Story.from_orm(story)
 
+    @handle_exception
     @execute_query
     def get_node(self, story_id: str, uri: str):
         node = (
@@ -62,6 +77,7 @@ class RDSDriver(DataDriver):
         )
         return schemas.Node(text=node.text, options=options)
 
+    @handle_exception
     @execute_query
     def get_story_list(self):
         stories = (
