@@ -6,20 +6,23 @@ from pydantic.json import pydantic_encoder
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
-from conf import settings
+from conf import RDSSettings
 
 
 def get_connection():
     # Setup Session and Client
     logging.info("Getting database connection")
+    rds_setting = RDSSettings()
     conn = create_engine(
-        f"postgresql://{settings.DB_USER}:{settings.DB_PASS}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}",
+        f"postgresql://{rds_setting.DB_USER}:{rds_setting.DB_PASS}@"
+        f"{rds_setting.DB_HOST}:{rds_setting.DB_PORT}/{rds_setting.DB_NAME}",
         json_serializer=partial(json.dumps, default=pydantic_encoder),
     )
     logging.info("Database connection established")
     return conn
 
 
+# TO DO: make lazy connection
 engine = get_connection()
 Base = declarative_base(bind=engine)
 

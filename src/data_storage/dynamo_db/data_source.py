@@ -5,34 +5,35 @@ from boto3.dynamodb.conditions import Key
 from botocore.config import Config
 
 from common.entities.schemas import Node, Story, StoryList
-from conf import settings
+from conf import DynamoDBSettings, settings
 from data_storage.data_source import DataDriver
 from utilities.exceptions import DynamoDBError
+
+
+def get_connection():
+    dynamo_settings = DynamoDBSettings()
+    config = Config(retries={"max_attempts": 1, "mode": "standard"})
+    if settings.LOCAL:
+        conn = boto3.resource(
+            "dynamodb",
+            endpoint_url=dynamo_settings.DYNAMODB_URL,
+            config=config,
+            region_name=dynamo_settings.REGION,
+        )
+    else:
+        conn = boto3.resource(
+            "dynamodb",
+            config=config,
+        )
+    return conn.Table(dynamo_settings.STORY_TABLE_NAME_DYNAMODB)
 
 
 class DynamoDBDriver(DataDriver):
     def __init__(self, connection=None):
         if connection is None:
-            self.connection = self._get_connection()
+            self.connection = get_connection()
         else:
             self.connection = connection
-        self.connection = self.connection.Table(settings.STORY_TABLE_NAME_DYNAMODB)
-
-    def _get_connection(self):
-        config = Config(retries={"max_attempts": 1, "mode": "standard"})
-        if settings.LOCAL:
-            conn = boto3.resource(
-                "dynamodb",
-                endpoint_url=settings.DYNAMODB_URL,
-                config=config,
-                region_name=settings.REGION,
-            )
-        else:
-            conn = boto3.resource(
-                "dynamodb",
-                config=config,
-            )
-        return conn
 
     def get_story(self, story_id: str):
         response = self.connection.query(

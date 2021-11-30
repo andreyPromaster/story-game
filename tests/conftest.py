@@ -25,7 +25,7 @@ def mock_db_session(aws_credentials, test_data):
         ],
     )
     client.Table(TABLE_NAME).put_item(Item=test_data)
-    yield DynamoDBDriver(client)
+    yield DynamoDBDriver(client.Table(TABLE_NAME))
     mock_dynamodb.stop()
 
 
