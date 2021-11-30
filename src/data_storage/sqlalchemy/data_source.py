@@ -82,7 +82,7 @@ class RDSDriver(DataDriver):
     def get_story_list(self):
         stories = (
             self.session.query(Story.id, Story.name, Node.name.label("root"))
-            .join(Node)
+            .join(Node, isouter=True)
             .filter(Node.name == "Root")
             .all()
         )

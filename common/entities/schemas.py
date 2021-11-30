@@ -21,7 +21,7 @@ class NodeList(BaseModel):
 
 
 class Story(BaseModel):
-    id: Optional[str]
+    id: str
     root: Optional[str]
     name: Optional[str]
 

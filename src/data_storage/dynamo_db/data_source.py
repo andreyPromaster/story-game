@@ -30,10 +30,7 @@ def get_connection():
 
 class DynamoDBDriver(DataDriver):
     def __init__(self, connection=None):
-        if connection is None:
-            self.connection = get_connection()
-        else:
-            self.connection = connection
+        self.connection = connection or get_connection()
 
     def get_story(self, story_id: str):
         response = self.connection.query(
