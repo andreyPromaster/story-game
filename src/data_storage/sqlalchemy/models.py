@@ -3,7 +3,7 @@ import logging
 from functools import partial
 
 from pydantic.json import pydantic_encoder
-from sqlalchemy import VARCHAR, Column, ForeignKey, Integer, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 from conf import settings
@@ -28,7 +28,7 @@ class Story(Base):
     __tablename__ = "story"
 
     id = Column(Integer, primary_key=True)
-    name = Column(VARCHAR(200), nullable=False)
+    name = Column(String(200), nullable=False)
 
 
 class Node(Base):
@@ -40,8 +40,8 @@ class Node(Base):
         ForeignKey("story.id", ondelete="CASCADE"),
         nullable=True,
     )
-    name = Column(VARCHAR(200), nullable=False, index=True)
-    text = Column(VARCHAR(200), nullable=False)
+    name = Column(String(200), nullable=False, index=True)
+    text = Column(String(200), nullable=False)
 
 
 class Option(Base):
@@ -52,4 +52,4 @@ class Option(Base):
         Integer, ForeignKey("node.id", ondelete="CASCADE"), nullable=True, index=True
     )
     cur_node = Column(Integer, ForeignKey("node.id", ondelete="CASCADE"), index=True)
-    text = Column(VARCHAR(200), nullable=False)
+    text = Column(String(200), nullable=False)

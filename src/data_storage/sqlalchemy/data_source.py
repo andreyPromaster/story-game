@@ -47,7 +47,7 @@ class RDSDriver(DataDriver):
     def get_story(self, story_id: str):
         story = (
             self.session.query(Story.id, Story.name, Node.name.label("root"))
-            .join(Node)
+            .join(Node, isouter=True)
             .filter(
                 Story.id == story_id,
                 Node.name == "Root",

@@ -1,4 +1,4 @@
-"""initial
+"""create story, node, option tables
 
 Revision ID: a5bbd3de82f5
 Revises:
