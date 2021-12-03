@@ -9,6 +9,7 @@ plugins:
   - serverless-wsgi
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-dotenv-plugin
 
 package:
   include:
@@ -47,7 +48,6 @@ provider:
         - { "Fn::GetAtt": ["StoryDynamoDBTable", "Arn" ] }
   environment:
     STORY_TABLE_NAME: ${self:custom.tableName}
-    LOCAL: 1
 
 functions:
   app:

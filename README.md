@@ -37,11 +37,17 @@ In the second window, start up your local WSGI server:
 ```shell
 sls wsgi serve
 ```
-Command for deploy on AWS:
-Change LOCAL environment in serverless.yml to 0
-```yml
-environment:
-  LOCAL: 0
+Deploy on AWS:
+
+Provide env file:
+```.shell
+STAGE=dev
+REGION=region
+LOCAL=0
+DB_HOST=RDS-host-name
+DB_PASS=RDS-password
+DB_USER=user
+DB_NAME=table-name
 ```
 After, run
 ```shell
