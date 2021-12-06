@@ -53,3 +53,27 @@ After, run
 ```shell
  sls deploy
 ```
+
+## ALEMBIC
+Create migration:
+```shell
+alembic revision --message="your message" --autogenerate
+```
+Apply all migrations
+```shell
+alembic upgrade head
+```
+Revert migration:
+Assuming that you only want to go back one revision
+```shell
+alembic downgrade -1
+```
+List of all migrations
+```shell
+alembic history
+```
+Choose the identifier of the migration you want to go back to:
+```shell
+alembic downgrade 8ac14e223d1e
+```
+Great tutorial about alembic: https://habr.com/ru/company/yandex/blog/511892/
