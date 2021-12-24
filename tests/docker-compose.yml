@@ -1,0 +1,19 @@
+version: "2.3"
+
+x-postgres-image: &postgres-image postgres:11.2
+
+volumes:
+    prezzee-data-11:
+
+services:
+    postgres_testing:
+        image: *postgres-image
+        ports:
+            - 127.0.0.1:9999:5432
+        environment:
+            POSTGRES_DB: test
+            POSTGRES_USER: testing
+            POSTGRES_PASSWORD: testing_password
+            command: -c 'synchronous_commit=off' -c 'fsync=off' -c 'full_page_writes=off' -c 'wal_writer_delay=5s' -c 'shared_buffers=512MB' -c 'checkpoint_segments=64' -c 'wal_buffers=16MB'
+        tmpfs: /var/lib/postgresql/data:rw
+        restart: unless-stopped
