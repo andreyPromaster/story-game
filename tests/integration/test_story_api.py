@@ -17,7 +17,7 @@ def test_api_get_story_list(mocker, mock_dynamo_driver, application_client, test
 
 
 def test_api_get_story_node(mocker, mock_dynamo_driver, application_client, test_data):
-    story_id, node_id = "test_id", "Root"
+    story_id, node_id = "1", "Root"
     mocker.patch(
         "api.story.data_source.get_node",
         return_value=mock_dynamo_driver.get_node(story_id, node_id),
@@ -26,8 +26,8 @@ def test_api_get_story_node(mocker, mock_dynamo_driver, application_client, test
     assert data.status_code == 200
     assert data.get_json() == {
         "options": [
-            {"next": "Branch1-test1", "text": "br1"},
-            {"next": "Branch2-test1", "text": "br2"},
+            {"next": None, "text": "br2"},
+            {"next": "Root1", "text": "br1"},
         ],
         "text": "root",
     }
@@ -36,7 +36,7 @@ def test_api_get_story_node(mocker, mock_dynamo_driver, application_client, test
 def test_api_get_not_exist_story_node(
     mocker, mock_dynamo_driver, application_client, test_data
 ):
-    story_id, node_id = "test_id", "not_exist"
+    story_id, node_id = "1", "not_exist"
     mocker.patch(
         "api.story.data_source.get_node",
         return_value=mock_dynamo_driver.get_node(story_id, node_id),
@@ -46,7 +46,7 @@ def test_api_get_not_exist_story_node(
 
 
 def test_api_get_story(mocker, mock_dynamo_driver, application_client, test_data):
-    story_id = "test_id"
+    story_id = "1"
     mocker.patch(
         "api.story.data_source.get_story",
         return_value=mock_dynamo_driver.get_story(story_id),
@@ -54,7 +54,7 @@ def test_api_get_story(mocker, mock_dynamo_driver, application_client, test_data
     data = application_client.get(f"api/story/{story_id}")
     assert data.status_code == 200
     assert data.get_json() == {
-        "id": "test_id",
+        "id": "1",
         "root": "Root",
         "name": "test_story",
     }

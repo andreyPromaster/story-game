@@ -6,14 +6,20 @@ from common.entities.schemas import Node
 from utilities.exceptions import DynamoDBError
 
 
-def test_get_story(mock_rds_driver, test_data):
-    story = mock_rds_driver.get_story("test_id")
+@pytest.mark.parametrize(
+    "db_driver", ["mock_dynamo_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_story(db_driver, test_data):
+    story = db_driver.get_story("1")
     assert story.id == test_data["id"]
     assert story.root == test_data["root"]
 
 
-def test_get_not_exist_story(mock_dynamo_driver):
-    story = mock_dynamo_driver.get_story("not_exist_id")
+@pytest.mark.parametrize(
+    "db_driver", ["mock_dynamo_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_not_exist_story(db_driver):
+    story = db_driver.get_story("not_exist_id")
     assert story is None
 
 
@@ -23,14 +29,20 @@ def test_get_story_with_response_error(mock_dynamo_driver):
         "ResponseMetadata": {"HTTPStatusCode": 404}
     }
     with pytest.raises(DynamoDBError):
-        mock_dynamo_driver.get_story("test_id")
+        mock_dynamo_driver.get_story("not_exist_id")
 
 
-def test_get_node(mock_dynamo_driver, test_data):
-    node = mock_dynamo_driver.get_node("test_id", "Root")
+@pytest.mark.parametrize(
+    "db_driver", ["mock_dynamo_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_node(db_driver, test_data):
+    node = db_driver.get_node("1", "Root")
     assert Node(**test_data["nodes"]["Root"]) == node
 
 
-def test_get_not_exist_node(mock_dynamo_driver):
-    node = mock_dynamo_driver.get_node("test_id", "not_exist_id")
+@pytest.mark.parametrize(
+    "db_driver", ["mock_dynamo_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_not_exist_node(db_driver):
+    node = db_driver.get_node("1", "not_exist_id")
     assert node is None
