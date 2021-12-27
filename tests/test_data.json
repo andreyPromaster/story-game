@@ -1,17 +1,17 @@
 {
-  "id": "test_id",
+  "id": "1",
   "root": "Root",
   "name": "test_story",
   "nodes": {
     "Root": {
       "options": [
         {
-          "next": "Branch1-test1",
-          "text": "br1"
+          "next": null,
+          "text": "br2"
         },
         {
-          "next": "Branch2-test1",
-          "text": "br2"
+          "next": "Root1",
+          "text": "br1"
         }
       ],
       "text": "root"
@@ -19,12 +19,12 @@
     "Root1": {
       "options": [
         {
-          "next": "Branch1",
-          "text": "br1"
+          "next": null,
+          "text": "br3"
         },
         {
-          "next": "Branch2",
-          "text": "br2"
+          "next": null,
+          "text": "br4"
         }
       ],
       "text": "root1"
