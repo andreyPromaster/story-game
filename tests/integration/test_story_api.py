@@ -30,8 +30,8 @@ def test_api_get_story_node(
     assert data.status_code == 200
     assert data.get_json() == {
         "options": [
-            {"next": None, "text": "br2"},
             {"next": "Root1", "text": "br1"},
+            {"next": None, "text": "br2"},
         ],
         "text": "root",
     }

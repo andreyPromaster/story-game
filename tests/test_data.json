@@ -6,12 +6,12 @@
     "Root": {
       "options": [
         {
-          "next": null,
-          "text": "br2"
-        },
-        {
           "next": "Root1",
           "text": "br1"
+        },
+        {
+          "next": null,
+          "text": "br2"
         }
       ],
       "text": "root"

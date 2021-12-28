@@ -73,6 +73,7 @@ class RDSDriver(DataDriver):
             .filter(
                 Option.cur_node == node.id,
             )
+            .order_by(Option.text)
             .all()
         )
         return schemas.Node(text=node.text, options=options)
