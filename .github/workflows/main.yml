@@ -20,7 +20,7 @@ jobs:
           POSTGRES_USER: testing
           POSTGRES_DB: test
         ports:
-          - 9999:9999
+          - 127.0.0.1:9999:5432
 
         options: >-
           --health-cmd pg_isready
