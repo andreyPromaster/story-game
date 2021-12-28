@@ -76,4 +76,18 @@ Choose the identifier of the migration you want to go back to:
 ```shell
 alembic downgrade 8ac14e223d1e
 ```
+
+# How to test:
+If you want to test dynamodb data source you can use package `moto`.
+To test RDS data source you need up a test database. Up test database:
+```shell
+docker-compose up --build -d
+```
+Run tests:
+```shell
+export PYTHONPATH=./src
+pytest tests
+```
+
+#WIKI
 Great tutorial about alembic: https://habr.com/ru/company/yandex/blog/511892/
