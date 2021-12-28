@@ -11,17 +11,16 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres
         env:
           POSTGRES_PASSWORD: testing_password
-          POSTGRES_PORT: 9999
           POSTGRES_USER: testing
           POSTGRES_DB: test
+        ports:
+          - 9999:9999
 
         options: >-
           --health-cmd pg_isready
