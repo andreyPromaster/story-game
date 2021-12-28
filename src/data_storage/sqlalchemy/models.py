@@ -9,7 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from conf import RDSSettings
 
 
-def get_connection():
+def get_connection_engine():
     # Setup Session and Client
     logging.info("Getting database connection")
     rds_setting = RDSSettings()
@@ -23,7 +23,7 @@ def get_connection():
 
 
 # TO DO: make lazy connection
-engine = get_connection()
+engine = get_connection_engine()
 Base = declarative_base(bind=engine)
 
 

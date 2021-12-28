@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app import app
 from data_storage.dynamo_db.data_source import DynamoDBDriver
 from data_storage.sqlalchemy.data_source import RDSDriver
-from data_storage.sqlalchemy.models import Base, get_connection
+from data_storage.sqlalchemy.models import Base, get_connection_engine
 
 
 @pytest.fixture(scope="session")
@@ -44,14 +44,18 @@ def test_data():
         return test_data
 
 
+@pytest.fixture(scope="session")
+def engine(mock_postgres_creds):
+    return get_connection_engine()
+
+
 @pytest.fixture
-def db_driver(request):
+def data_driver(request):
     return request.getfixturevalue(request.param)
 
 
 @pytest.fixture
-def mock_rds_driver(mock_postgres_creds, setup_db, request):
-    engine = get_connection()
+def mock_rds_driver(engine, setup_db, request):
     connection = engine.connect()
 
     load_test_sql_data(connection)
@@ -75,8 +79,7 @@ def mock_rds_driver(mock_postgres_creds, setup_db, request):
 
 
 @pytest.fixture
-def setup_db():
-    engine = get_connection()
+def setup_db(engine):
     connection = engine.connect()
     Base.metadata.bind = connection
     Base.metadata.create_all()
@@ -85,7 +88,7 @@ def setup_db():
 
 
 @pytest.fixture
-def mock_dynamo_driver(aws_credentials, test_data):
+def mock_dynamodb_driver(aws_credentials, test_data):
     mock_dynamodb = mock_dynamodb2()
     mock_dynamodb.start()
     TABLE_NAME = os.getenv("STORY_TABLE_NAME", "stories")
