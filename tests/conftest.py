@@ -1,5 +1,6 @@
 import json
 import os
+from unittest import mock
 
 import boto3
 import pytest
@@ -15,11 +16,16 @@ from data_storage.sqlalchemy.models import Base, get_connection_engine
 
 @pytest.fixture(scope="session")
 def mock_postgres_creds():
-    os.environ["DB_NAME"] = "test"
-    os.environ["DB_HOST"] = "127.0.0.1"
-    os.environ["DB_PORT"] = "9999"
-    os.environ["DB_PASS"] = "testing_password"
-    os.environ["DB_USER"] = "testing"
+    test_env = {
+        **os.environ,
+        "DB_NAME": "test",
+        "DB_HOST": "127.0.0.1",
+        "DB_PORT": "9999",
+        "DB_PASS": "testing_password",
+        "DB_USER": "testing",
+    }
+    with mock.patch("os.environ", test_env):
+        yield
 
 
 @pytest.fixture
@@ -41,7 +47,7 @@ def load_test_sql_data(connection):
 def test_data():
     with open("tests/test_data.json", "r") as file:
         test_data = json.load(file)
-        return test_data
+    return test_data
 
 
 @pytest.fixture(scope="session")
