@@ -6,7 +6,7 @@ story_api = Blueprint("story_api_br", __name__)
 data_source = get_data_source()
 
 
-@story_api.route("/stories/<string:story_id>")
+@story_api.route("/stories/<string:story_id>", methods=["GET"])
 def get_story(story_id):
     story = data_source.get_story(story_id=story_id)
     if story is not None:
@@ -15,13 +15,16 @@ def get_story(story_id):
         abort(404)
 
 
-@story_api.route("/stories")
-def list_story():
+@story_api.route("/stories", methods=["GET", "POST"])
+def create_or_get_list_story(request):
+    if request.method == "POST":
+        data = request.get_json()
+        data_source.create_story(data)
     stories = data_source.get_story_list()
     return jsonify(stories.dict())
 
 
-@story_api.route("/stories/<string:story_id>/nodes/<string:uri>")
+@story_api.route("/stories/<string:story_id>/nodes/<string:uri>", methods=["GET"])
 def get_story_node(story_id, uri):
     node = data_source.get_node(story_id=story_id, uri=uri)
     if node is not None:
