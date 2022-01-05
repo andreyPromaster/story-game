@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from common.entities import schemas
 from data_storage.data_source import DataDriver
-from data_storage.sqlalchemy.models import Node, Option, Story, get_connection
+from data_storage.sqlalchemy.models import Node, Option, Story, get_connection_engine
 
 logging.basicConfig()
 logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
@@ -36,7 +36,7 @@ def handle_exception(method):
 class RDSDriver(DataDriver):
     def __init__(self, session=None):
         if session is None:
-            engine = get_connection()
+            engine = get_connection_engine()
             Sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=engine)
             self.session = Sessionmaker()
         else:
@@ -73,6 +73,7 @@ class RDSDriver(DataDriver):
             .filter(
                 Option.cur_node == node.id,
             )
+            .order_by(Option.id)
             .all()
         )
         return schemas.Node(text=node.text, options=options)

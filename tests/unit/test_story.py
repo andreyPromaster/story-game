@@ -6,31 +6,43 @@ from common.entities.schemas import Node
 from utilities.exceptions import DynamoDBError
 
 
-def test_get_story(mock_db_session, test_data):
-    story = mock_db_session.get_story("test_id")
+@pytest.mark.parametrize(
+    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_story(data_driver, test_data):
+    story = data_driver.get_story("1")
     assert story.id == test_data["id"]
     assert story.root == test_data["root"]
 
 
-def test_get_not_exist_story(mock_db_session):
-    story = mock_db_session.get_story("not_exist_id")
+@pytest.mark.parametrize(
+    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_not_exist_story(data_driver):
+    story = data_driver.get_story("not_exist_id")
     assert story is None
 
 
-def test_get_story_with_response_error(mock_db_session):
-    mock_db_session.connection = MagicMock()
-    mock_db_session.connection.query.return_value = {
+def test_get_story_with_response_error(mock_dynamodb_driver):
+    mock_dynamodb_driver.connection = MagicMock()
+    mock_dynamodb_driver.connection.query.return_value = {
         "ResponseMetadata": {"HTTPStatusCode": 404}
     }
     with pytest.raises(DynamoDBError):
-        mock_db_session.get_story("test_id")
+        mock_dynamodb_driver.get_story("not_exist_id")
 
 
-def test_get_node(mock_db_session, test_data):
-    node = mock_db_session.get_node("test_id", "Root")
+@pytest.mark.parametrize(
+    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_node(data_driver, test_data):
+    node = data_driver.get_node("1", "Root")
     assert Node(**test_data["nodes"]["Root"]) == node
 
 
-def test_get_not_exist_node(mock_db_session):
-    node = mock_db_session.get_node("test_id", "not_exist_id")
+@pytest.mark.parametrize(
+    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
+)
+def test_get_not_exist_node(data_driver):
+    node = data_driver.get_node("1", "not_exist_id")
     assert node is None

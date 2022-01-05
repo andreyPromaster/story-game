@@ -37,13 +37,57 @@ In the second window, start up your local WSGI server:
 ```shell
 sls wsgi serve
 ```
-Command for deploy on AWS:
-Change LOCAL environment in serverless.yml to 0
-```yml
-environment:
-  LOCAL: 0
+Deploy on AWS:
+
+Provide env file:
+```.shell
+STAGE=dev
+REGION=region
+LOCAL=0
+DB_HOST=RDS-host-name
+DB_PASS=RDS-password
+DB_USER=user
+DB_NAME=table-name
 ```
 After, run
 ```shell
  sls deploy
 ```
+
+## ALEMBIC
+Create migration:
+```shell
+alembic revision --message="your message" --autogenerate
+```
+Apply all migrations
+```shell
+alembic upgrade head
+```
+Revert migration:
+Assuming that you only want to go back one revision
+```shell
+alembic downgrade -1
+```
+List of all migrations
+```shell
+alembic history
+```
+Choose the identifier of the migration you want to go back to:
+```shell
+alembic downgrade 8ac14e223d1e
+```
+
+# How to test:
+If you want to test dynamodb data source you can use package `moto`.
+To test RDS data source you need up a test database. Up test database:
+```shell
+docker-compose up --build -d
+```
+Run tests:
+```shell
+export PYTHONPATH=./src
+pytest tests
+```
+
+#WIKI
+Great tutorial about alembic: https://habr.com/ru/company/yandex/blog/511892/
