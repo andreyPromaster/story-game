@@ -1,6 +1,12 @@
 import abc
 
 from common.entities.schemas import Node, Story, StoryList
+from data_storage.validators import (
+    is_existing_graph_cycle,
+    is_existing_root_node,
+    is_existing_unconnected_node,
+    is_existing_unrelated_reference,
+)
 
 
 class DataDriver(abc.ABC):
@@ -16,7 +22,6 @@ class DataDriver(abc.ABC):
     def get_story_list(self) -> StoryList:
         """Get list of stories"""
 
-    @abc.abstractmethod
     def create_story(self, data: dict):
         """
         Template method.
@@ -30,13 +35,9 @@ class DataDriver(abc.ABC):
     def _create_story(self, data):
         raise NotImplementedError
 
-    def _validate_story_item(self, story_data):
-        pass
-
-    def parse_graph(self, data: dict):
-        """Move to other file"""
-        nodes = data["nodes"]
-        graph = {}
-        for key, options in nodes.items():
-            graph[key] = [option["next"] for option in options]
-        return graph
+    @staticmethod
+    def _validate_story_item(story_data):
+        is_existing_root_node(story_data)
+        is_existing_unconnected_node(story_data)
+        is_existing_unrelated_reference(story_data)
+        is_existing_graph_cycle(story_data)

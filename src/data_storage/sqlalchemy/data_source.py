@@ -88,3 +88,6 @@ class RDSDriver(DataDriver):
             .all()
         )
         return schemas.StoryList(stories=stories)
+
+    def _create_story(self, data):
+        pass
