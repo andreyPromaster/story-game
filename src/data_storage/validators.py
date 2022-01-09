@@ -1,3 +1,5 @@
+from itertools import chain
+
 from utilities.exceptions import (
     ExistsCircleValidationError,
     RootDoesNotExistValidationError,
@@ -34,14 +36,17 @@ def is_existing_root_node(graph):
 
 
 def is_existing_unconnected_node(graph):
-    for key, references in graph.items():
-        if key not in references:
-            raise UnconnectedNodeValidationError
+    """Root is one node that does not have any references"""   
+    references = set(chain.from_iterable(graph.values()))
+    for node in graph.keys():
+        if node not in references and node != "Root":
+                raise UnconnectedNodeValidationError
 
 
-def is_existing_unrelated_reference(graph):
-    """Use sets, not lists"""
+def is_existing_unrelated_reference(graph):    
+    nodes = set(graph.keys())
+    
     for references in graph.values():
         for reference in references:
-            if reference not in graph.key():
+            if reference not in nodes and reference is not None:
                 raise UnrelatedReferenceValidationError
