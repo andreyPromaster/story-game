@@ -7,6 +7,7 @@ from data_storage.validators import (
     is_existing_unconnected_node,
     is_existing_unrelated_reference,
 )
+from utilities.functools import parse_graph
 
 
 class DataDriver(abc.ABC):
@@ -28,7 +29,8 @@ class DataDriver(abc.ABC):
         Raise exception if unsuccessful.
         Validate and create story item
         """
-        self._validate_story_item(data)
+        graph, root_node = parse_graph(data)
+        self._validate_story_item(graph)
         self._create_story(data)
 
     @abc.abstractmethod

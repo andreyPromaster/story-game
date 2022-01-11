@@ -1,7 +1,10 @@
 def parse_graph(data: dict):
-    """Function that represent users story like a graph"""
+    """
+    Function that represent users story like a graph.
+    Second return value is a root node.
+    """
     nodes = data["nodes"]
     graph = {}
     for key, options in nodes.items():
         graph[key] = [option["next"] for option in options["options"]]
-    return graph
+    return graph, data["root"]

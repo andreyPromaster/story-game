@@ -35,6 +35,7 @@ class Story(Base):
 
 
 class Node(Base):
+    """Make boolean flag to show root node or name always root node as Root"""
     __tablename__ = "node"
 
     id = Column(Integer, primary_key=True)
