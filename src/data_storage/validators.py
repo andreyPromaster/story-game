@@ -26,6 +26,7 @@ def deep_first_search(graph, current_vertex, color={}):
 
 
 def is_existing_graph_cycle(graph):
+    """This  validation will run after def is_existing_root_node"""
     if deep_first_search(graph, "Root"):
         raise ExistsCircleValidationError
 
@@ -40,7 +41,7 @@ def is_existing_unconnected_node(graph):
     references = set(chain.from_iterable(graph.values()))
     for node in graph.keys():
         if node not in references and node != "Root":
-                raise UnconnectedNodeValidationError
+            raise UnconnectedNodeValidationError
 
 
 def is_existing_unrelated_reference(graph):    

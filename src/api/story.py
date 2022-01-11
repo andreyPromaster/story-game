@@ -1,6 +1,7 @@
-from flask import Blueprint, abort, jsonify
+from flask import Blueprint, abort, jsonify, request
 
 from data_storage.connection import get_data_source
+from utilities.exceptions import ValidationError
 
 story_api = Blueprint("story_api_br", __name__)
 data_source = get_data_source()
@@ -16,12 +17,17 @@ def get_story(story_id):
 
 
 @story_api.route("/stories", methods=["GET", "POST"])
-def create_or_get_list_story(request):
+def create_or_get_list_story():
     if request.method == "POST":
         data = request.get_json()
-        data_source.create_story(data)
-    stories = data_source.get_story_list()
-    return jsonify(stories.dict())
+        try:
+            saved_story = data_source.create_story(data)
+        except ValidationError as e:
+            return jsonify(str(e)), 400
+        return jsonify(saved_story), 201
+    if request.method == "GET":
+        stories = data_source.get_story_list()
+        return jsonify(stories.dict())
 
 
 @story_api.route("/stories/<string:story_id>/nodes/<string:uri>", methods=["GET"])
