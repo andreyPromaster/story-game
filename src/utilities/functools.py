@@ -16,6 +16,6 @@ def parse_graph(data: dict):
         graph = {}
         for key, options in nodes.items():
             graph[key] = [option.next for option in options.options]
-        return graph, story_item.root
+        return graph, story_item, story_item.root
     except ValidationError as e:
         raise ParseGraphError(e.errors()) from e
