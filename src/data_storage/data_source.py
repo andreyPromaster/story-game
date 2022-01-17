@@ -30,7 +30,7 @@ class DataDriver(abc.ABC):
         Validate and create story item
         """
         graph, root_node = parse_graph(data)
-        self._validate_story_item(graph)
+        self._validate_story_item(graph, root_node)
         self._create_story(data)
 
     @abc.abstractmethod
@@ -38,8 +38,8 @@ class DataDriver(abc.ABC):
         raise NotImplementedError
 
     @staticmethod
-    def _validate_story_item(story_data):
-        is_existing_root_node(story_data)
-        is_existing_unconnected_node(story_data)
+    def _validate_story_item(story_data, root_node):
+        is_existing_root_node(story_data, root_node)
+        is_existing_unconnected_node(story_data, root_node)
         is_existing_unrelated_reference(story_data)
-        is_existing_graph_cycle(story_data)
+        is_existing_graph_cycle(story_data, root_node)

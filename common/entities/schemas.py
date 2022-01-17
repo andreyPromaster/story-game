@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel
 
@@ -17,16 +17,20 @@ class Node(BaseModel):
 
 
 class NodeList(BaseModel):
-    nodes: List[Node] = []
+    nodes: Dict[str, Node]
 
 
 class Story(BaseModel):
     id: str
-    root: Optional[str]
+    root: str = "Root"
     name: Optional[str]
 
     class Config:
         orm_mode = True
+
+
+class StoryItem(Story, NodeList):
+    id: Optional[str]
 
 
 class StoryList(BaseModel):

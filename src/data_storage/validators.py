@@ -25,28 +25,28 @@ def deep_first_search(graph, current_vertex, color={}):
     return all(circle_result)
 
 
-def is_existing_graph_cycle(graph):
+def is_existing_graph_cycle(graph, root_node):
     """This  validation will run after def is_existing_root_node"""
-    if deep_first_search(graph, "Root"):
+    if deep_first_search(graph, root_node):
         raise ExistsCircleValidationError
 
 
-def is_existing_root_node(graph):
-    if "Root" not in graph.keys():
+def is_existing_root_node(graph, root_node):
+    if root_node not in graph.keys():
         raise RootDoesNotExistValidationError
 
 
-def is_existing_unconnected_node(graph):
-    """Root is one node that does not have any references"""   
+def is_existing_unconnected_node(graph, root_node):
+    """Root is one possible node that does not have any references"""
     references = set(chain.from_iterable(graph.values()))
     for node in graph.keys():
-        if node not in references and node != "Root":
+        if node not in references and node != root_node:
             raise UnconnectedNodeValidationError
 
 
-def is_existing_unrelated_reference(graph):    
+def is_existing_unrelated_reference(graph):
     nodes = set(graph.keys())
-    
+
     for references in graph.values():
         for reference in references:
             if reference not in nodes and reference is not None:
