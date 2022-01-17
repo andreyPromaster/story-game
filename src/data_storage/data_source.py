@@ -32,6 +32,7 @@ class DataDriver(abc.ABC):
         graph, validated_story_data, root_node = parse_graph(data)
         self._validate_story_item(graph, root_node)
         self._create_story(validated_story_data)
+        return validated_story_data
 
     @abc.abstractmethod
     def _create_story(self, data):

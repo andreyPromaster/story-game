@@ -1,3 +1,4 @@
+import uuid
 from typing import Dict, List, Optional
 
 from pydantic import BaseModel
@@ -30,7 +31,7 @@ class Story(BaseModel):
 
 
 class StoryItem(Story, NodeList):
-    id: Optional[str]
+    id: str = str(uuid.uuid4())
 
 
 class StoryList(BaseModel):
