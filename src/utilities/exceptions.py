@@ -4,13 +4,14 @@ class DynamoDBError(Exception):
 
 class ValidationError(Exception):
     """Exception class which represents a different story validation errors"""
+
     def __init__(self, message):
         self.message = message
         super().__init__(message)
 
 
 class RootDoesNotExistValidationError(ValidationError):
-    def __init__(self, message="The Root node does not exist"):
+    def __init__(self, message="The provided root node does not exist"):
         super().__init__(message)
 
 
@@ -26,4 +27,9 @@ class UnconnectedNodeValidationError(ValidationError):
 
 class UnrelatedReferenceValidationError(ValidationError):
     def __init__(self, message="The story node has link to uncreated branch"):
+        super().__init__(message)
+
+
+class ParseGraphError(ValidationError):
+    def __init__(self, message="The story item has unsupported structure"):
         super().__init__(message)

@@ -33,7 +33,9 @@ def is_existing_graph_cycle(graph, root_node):
 
 def is_existing_root_node(graph, root_node):
     if root_node not in graph.keys():
-        raise RootDoesNotExistValidationError
+        raise RootDoesNotExistValidationError(
+            f"Provided {root_node} root node does not exist"
+        )
 
 
 def is_existing_unconnected_node(graph, root_node):

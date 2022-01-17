@@ -23,7 +23,7 @@ def create_or_get_list_story():
         try:
             saved_story = data_source.create_story(data)
         except ValidationError as e:
-            return jsonify(str(e)), 400
+            return jsonify(e.message), 400
         return jsonify(saved_story), 201
     if request.method == "GET":
         stories = data_source.get_story_list()
