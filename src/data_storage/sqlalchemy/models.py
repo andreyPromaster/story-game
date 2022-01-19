@@ -3,8 +3,9 @@ import logging
 from functools import partial
 
 from pydantic.json import pydantic_encoder
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import expression
 
 from conf import RDSSettings
 
@@ -30,22 +31,24 @@ Base = declarative_base(bind=engine)
 class Story(Base):
     __tablename__ = "story"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(36), primary_key=True)
     name = Column(String(200), nullable=False)
 
 
 class Node(Base):
     """Make boolean flag to show root node or name always root node as Root"""
+
     __tablename__ = "node"
 
     id = Column(Integer, primary_key=True)
     story = Column(
-        Integer,
+        String(36),
         ForeignKey("story.id", ondelete="CASCADE"),
         nullable=True,
     )
     name = Column(String(200), nullable=False, index=True)
     text = Column(String(200), nullable=False)
+    is_root = Column(Boolean, server_default=expression.true(), nullable=False)
 
 
 class Option(Base):

@@ -1,5 +1,5 @@
 import uuid
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from pydantic import BaseModel
 
@@ -24,7 +24,7 @@ class NodeList(BaseModel):
 class Story(BaseModel):
     id: str
     root: str = "Root"
-    name: Optional[str]
+    name: str
 
     class Config:
         orm_mode = True
