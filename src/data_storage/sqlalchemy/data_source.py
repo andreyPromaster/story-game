@@ -90,14 +90,20 @@ class RDSDriver(DataDriver):
         return schemas.StoryList(stories=stories)
 
     @execute_query
-    def _create_story(self, data):
+    def _create_story(self, data: schemas.StoryItem):
         savepoint = self.session.begin_nested()
         story = Story(id=data.id, name=data.name)
         self.session.add(story)
         savepoint.commit()
+
         savepoint = self.session.begin_nested()
         for node_name, node_data in data.nodes.items():
-            node = Node(story=story.id, name=node_name, text=node_data.text)
+            node = Node(
+                story=story.id,
+                name=node_name,
+                text=node_data.text,
+                is_root=node_name == data.root,
+            )
             self.session.add(node)
         savepoint.commit()
 
