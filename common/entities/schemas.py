@@ -1,7 +1,11 @@
-import uuid
 from typing import Dict, List
+from uuid import uuid4
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
+
+
+def generate_uuid_as_str():
+    return str(uuid4())
 
 
 class Option(BaseModel):
@@ -26,12 +30,18 @@ class Story(BaseModel):
     root: str = "Root"
     name: str
 
+    @validator("id")
+    def username_alphanumeric(cls, v):
+        UUID_LENGTH = 36
+        assert len(v) < UUID_LENGTH, "length must be less than 36 symbols"
+        return v
+
     class Config:
         orm_mode = True
 
 
 class StoryItem(Story, NodeList):
-    id: str = str(uuid.uuid4())
+    id: str = Field(default_factory=generate_uuid_as_str)
 
 
 class StoryList(BaseModel):
