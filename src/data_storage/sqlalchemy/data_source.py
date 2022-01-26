@@ -89,17 +89,28 @@ class RDSDriver(DataDriver):
         )
         return schemas.StoryList(stories=stories)
 
+    @execute_query
     def _create_story(self, data):
-        breakpoint()
+        savepoint = self.session.begin_nested()
         story = Story(id=data.id, name=data.name)
         self.session.add(story)
+        savepoint.commit()
+        savepoint = self.session.begin_nested()
         for node_name, node_data in data.nodes.items():
             node = Node(story=story.id, name=node_name, text=node_data.text)
             self.session.add(node)
-        self.session.commit()
+        savepoint.commit()
 
-        for option in node_data.options:
-            next_node = Node.query.filter_by(name=option.next, story=story).first()
-            new_option = Option(cur_node=next_node, text=option.text, next=node)
-            self.session.add(new_option)
-        self.session.commit()
+        savepoint = self.session.begin_nested()
+        nodes = self.session.query(Node).filter(Node.story == story.id)
+        for node_name, node_data in data.nodes.items():
+            for option in node_data.options:
+                cur_node = nodes.filter_by(name=node_name).one()
+                next_node = nodes.filter_by(name=option.next).one_or_none()
+                new_option = Option(
+                    cur_node=cur_node.id,
+                    text=option.text,
+                    next=next_node and next_node.id,
+                )
+                self.session.add(new_option)
+        savepoint.commit()
