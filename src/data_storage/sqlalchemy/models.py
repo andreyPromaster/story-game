@@ -48,7 +48,7 @@ class Node(Base):
     )
     name = Column(String(200), nullable=False, index=True)
     text = Column(String(200), nullable=False)
-    is_root = Column(Boolean, server_default=expression.true(), nullable=False)
+    is_root = Column(Boolean, server_default=expression.false(), nullable=False)
 
 
 class Option(Base):

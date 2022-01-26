@@ -22,7 +22,7 @@ def upgrade():
     op.add_column(
         "node",
         sa.Column(
-            "is_root", sa.Boolean(), server_default=sa.text("true"), nullable=False
+            "is_root", sa.Boolean(), server_default=sa.text("false"), nullable=False
         ),
     )
     drop_constraint("node_story_fkey", "node")
