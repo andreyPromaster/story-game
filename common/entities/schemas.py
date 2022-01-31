@@ -31,7 +31,7 @@ class Story(BaseModel):
     name: str
 
     @validator("id")
-    def username_alphanumeric(cls, v):
+    def id_length(cls, v):
         UUID_LENGTH = 36
         assert len(v) < UUID_LENGTH, "length must be less than 36 symbols"
         return v

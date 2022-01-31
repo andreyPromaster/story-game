@@ -97,26 +97,29 @@ class RDSDriver(DataDriver):
         savepoint.commit()
 
         savepoint = self.session.begin_nested()
-        for node_name, node_data in data.nodes.items():
-            node = Node(
+        nodes = [
+            Node(
                 story=story.id,
                 name=node_name,
                 text=node_data.text,
                 is_root=node_name == data.root,
             )
-            self.session.add(node)
+            for node_name, node_data in data.nodes.items()
+        ]
+        self.session.add_all(nodes)
         savepoint.commit()
 
         savepoint = self.session.begin_nested()
-        nodes = self.session.query(Node).filter(Node.story == story.id)
+        options = []
         for node_name, node_data in data.nodes.items():
             for option in node_data.options:
-                cur_node = nodes.filter_by(name=node_name).one()
-                next_node = nodes.filter_by(name=option.next).one_or_none()
+                cur_node = list(filter(lambda node: node.name == node_name, nodes))[0]
+                next_node = list(filter(lambda node: node.name == option.next, nodes))
                 new_option = Option(
                     cur_node=cur_node.id,
                     text=option.text,
-                    next=next_node and next_node.id,
+                    next=next_node[0].id if next_node else None,
                 )
-                self.session.add(new_option)
+                options.append(new_option)
+        self.session.add_all(options)
         savepoint.commit()
