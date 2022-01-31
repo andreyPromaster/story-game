@@ -37,7 +37,9 @@ class DataDriver(abc.ABC):
 
     @abc.abstractmethod
     def _create_story(self, data):
-        raise NotImplementedError
+        """
+        Method, that responds for creation of a history for a specific driver.
+        """
 
     @staticmethod
     def _validate_story_item(story_data, root_node):

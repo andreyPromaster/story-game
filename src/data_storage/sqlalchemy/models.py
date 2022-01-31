@@ -1,5 +1,4 @@
 import json
-import logging
 from functools import partial
 
 from pydantic.json import pydantic_encoder
@@ -12,14 +11,13 @@ from conf import RDSSettings
 
 def get_connection_engine():
     # Setup Session and Client
-    logging.info("Getting database connection")
     rds_setting = RDSSettings()
     conn = create_engine(
         f"postgresql://{rds_setting.DB_USER}:{rds_setting.DB_PASS}@"
         f"{rds_setting.DB_HOST}:{rds_setting.DB_PORT}/{rds_setting.DB_NAME}",
         json_serializer=partial(json.dumps, default=pydantic_encoder),
+        echo=True,
     )
-    logging.info("Database connection established")
     return conn
 
 
