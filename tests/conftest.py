@@ -117,3 +117,88 @@ def mock_dynamodb_driver(aws_credentials, test_data):
 def application_client():
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def valid_story_graphs():
+    data = (
+        (
+            {
+                "Root": [None, "Node1"],
+                "Node1": ["Root"],
+            },
+            "Root",
+        ),
+        (
+            {
+                "Root": ["Node1"],
+                "Node1": ["Root", None],
+            },
+            "Root",
+        ),
+        (
+            {
+                "Root": ["Node1"],
+                "Node1": ["Root", None],
+            },
+            "Root",
+        ),
+        (
+            {
+                "Node1": ["Node2", "Node3", "Node4"],
+                "Node2": ["Node3", None],
+                "Node3": ["Node4"],
+                "Node4": [],
+            },
+            "Node1",
+        ),
+        (
+            {
+                "Node1": ["Node2", "Node3"],
+                "Node2": ["Node1", "Node4"],
+                "Node3": ["Node4", "Node5"],
+                "Node4": ["Node6"],
+                "Node5": [],
+                "Node6": ["Node2"],
+            },
+            "Node1",
+        ),
+    )
+    return data
+
+
+@pytest.fixture
+def cycle_story_graphs():
+    data = (
+        (
+            {
+                "Root": ["Node1"],
+                "Node1": ["Node2"],
+                "Node2": ["Node1"],
+            },
+            "Root",
+        ),
+        (
+            {
+                "Node1": ["Node2", "Node3"],
+                "Node2": ["Node1", "Node4"],
+                "Node3": ["Node4", "Node5"],
+                "Node4": ["Node6"],
+                "Node5": ["Node3"],
+                "Node6": ["Node2"],
+            },
+            "Node1",
+        ),
+        (
+            {
+                "Node1": ["Node2", "Node3"],
+                "Node2": ["Node5", "Node6"],
+                "Node3": ["Node4", "Node5"],
+                "Node4": ["Node5", "Node3"],
+                "Node5": ["Node3", "Node4"],
+                "Node6": [],
+            },
+            "Node1",
+        ),
+    )
+    return data
