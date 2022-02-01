@@ -8,8 +8,12 @@ from utilities.exceptions import (
 )
 
 
-def deep_first_search(graph, current_vertex, color={}):
-    if current_vertex is None:
+def deep_first_search(graph, current_vertex, color=None):
+    if color is None:
+        color = {}
+
+    # If we have reference to None or node without options it means branch has end
+    if current_vertex is None or not graph[current_vertex]:
         return False
     color[current_vertex] = "grey"
 
@@ -19,7 +23,7 @@ def deep_first_search(graph, current_vertex, color={}):
         if node_color is None:  # it is expected that all nodes have white color
             circle_result.append(deep_first_search(graph, node, color))
         if node_color == "grey":
-            return True
+            circle_result.append(True)
 
     color[current_vertex] = "black"
     return all(circle_result)
