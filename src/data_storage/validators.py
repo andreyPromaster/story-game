@@ -1,4 +1,6 @@
+import logging
 from itertools import chain
+from typing import DefaultDict
 
 from utilities.exceptions import (
     ExistsCircleValidationError,
@@ -7,31 +9,34 @@ from utilities.exceptions import (
     UnrelatedReferenceValidationError,
 )
 
-
-def deep_first_search(graph, current_vertex, color=None):
-    if color is None:
-        color = {}
-
-    # If we have reference to None or node without options it means branch has end
-    if current_vertex is None or not graph[current_vertex]:
-        return False
-    color[current_vertex] = "grey"
-
-    circle_result = []
-    for node in graph[current_vertex]:
-        node_color = color.get(node)
-        if node_color is None:  # it is expected that all nodes have white color
-            circle_result.append(deep_first_search(graph, node, color))
-        if node_color == "grey":
-            circle_result.append(True)
-
-    color[current_vertex] = "black"
-    return all(circle_result)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("test")
 
 
-def is_existing_graph_cycle(graph, root_node):
-    """This  validation will run after def is_existing_root_node"""
-    if deep_first_search(graph, root_node):
+def is_existing_graph_cycle(graph: DefaultDict[str, list], exit_nodes: set):
+    """
+    The basic idea is to start from node that has reference to None
+    or has no options(exit_node) and mark the node(that has exit and move)
+    to the adjacent unmarked node and continue this loop
+    until there is no unmarked adjacent node.
+
+    If we have unmarked node that means story has branch without end.
+    """
+
+    has_exit = set()
+
+    def deep_first_search(current_vertex):
+
+        has_exit.add(current_vertex)
+
+        for node in graph[current_vertex]:
+            if node not in has_exit:
+                deep_first_search(node)
+
+    for exit_node in exit_nodes:
+        deep_first_search(exit_node)
+
+    if set(graph.keys()) != has_exit:
         raise ExistsCircleValidationError
 
 

@@ -124,44 +124,37 @@ def valid_story_graphs():
     data = (
         (
             {
-                "Root": [None, "Node1"],
+                "Root": ["Node1"],
                 "Node1": ["Root"],
             },
-            "Root",
+            {"Root"},
         ),
         (
             {
                 "Root": ["Node1"],
-                "Node1": ["Root", None],
+                "Node1": ["Root"],
             },
-            "Root",
+            {"Node1"},
         ),
         (
             {
-                "Root": ["Node1"],
-                "Node1": ["Root", None],
+                "Node1": [],
+                "Node2": ["Node1"],
+                "Node3": ["Node2", "Node1"],
+                "Node4": ["Node1", "Node3"],
             },
-            "Root",
+            {"Node2", "Node4"},
         ),
         (
             {
-                "Node1": ["Node2", "Node3", "Node4"],
-                "Node2": ["Node3", None],
-                "Node3": ["Node4"],
-                "Node4": [],
+                "Node1": ["Node2"],
+                "Node2": ["Node1", "Node6"],
+                "Node3": ["Node1"],
+                "Node4": ["Node2", "Node3"],
+                "Node5": ["Node3"],
+                "Node6": ["Node4"],
             },
-            "Node1",
-        ),
-        (
-            {
-                "Node1": ["Node2", "Node3"],
-                "Node2": ["Node1", "Node4"],
-                "Node3": ["Node4", "Node5"],
-                "Node4": ["Node6"],
-                "Node5": [],
-                "Node6": ["Node2"],
-            },
-            "Node1",
+            {"Node5"},
         ),
     )
     return data
@@ -172,33 +165,33 @@ def cycle_story_graphs():
     data = (
         (
             {
-                "Root": ["Node1"],
-                "Node1": ["Node2"],
+                "Root": [],
+                "Node1": ["Root", "Node2"],
                 "Node2": ["Node1"],
             },
-            "Root",
+            {},
         ),
         (
             {
-                "Node1": ["Node2", "Node3"],
-                "Node2": ["Node1", "Node4"],
-                "Node3": ["Node4", "Node5"],
-                "Node4": ["Node6"],
+                "Node1": ["Node2"],
+                "Node2": ["Node1"],
+                "Node3": ["Node1", "Node5"],
+                "Node4": ["Node3", "Node2", "Node6"],
                 "Node5": ["Node3"],
-                "Node6": ["Node2"],
+                "Node6": ["Node4"],
             },
-            "Node1",
+            {"Node5"},
         ),
         (
             {
-                "Node1": ["Node2", "Node3"],
-                "Node2": ["Node6"],
-                "Node3": ["Node4", "Node5"],
+                "Node1": [],
+                "Node2": ["Node1"],
+                "Node3": ["Node1", "Node5", "Node4"],
                 "Node4": ["Node5", "Node3"],
                 "Node5": ["Node3", "Node4"],
-                "Node6": [],
+                "Node6": ["Node2"],
             },
-            "Node1",
+            {"Node6"},
         ),
     )
     return data

@@ -19,7 +19,7 @@ def parse_story_structure(data: dict):
 def parse_graph(story_item: StoryItem) -> tuple[DefaultDict[str, list], set]:
     """
     Function that represent users story like a graph.
-    Second return value is a root node.
+    Key is node name, list is reference to this node.
     """
     try:
         graph = defaultdict(list)

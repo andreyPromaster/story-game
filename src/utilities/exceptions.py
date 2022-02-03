@@ -16,7 +16,7 @@ class RootDoesNotExistValidationError(ValidationError):
 
 
 class ExistsCircleValidationError(ValidationError):
-    def __init__(self, message="The story has branch from which there is no end"):
+    def __init__(self, message="The story branch has no end"):
         super().__init__(message)
 
 
