@@ -30,37 +30,41 @@ def test_parse_graph():
     story = parse_story_structure(
         get_test_data_from_json_file("tests/unit/test_json/valid_story.json")
     )
-    graph, root_node = parse_graph(story)
+    graph, exit_nodes = parse_graph(story)
     assert graph == {
-        "Root": ["Node1", None],
-        "Node1": ["Node2", None],
-        "Node2": [None, "Root"],
+        "Root": ["Node2"],
+        "Node1": ["Root"],
+        "Node2": ["Node1"],
     }
-    assert root_node == "Root"
+    assert exit_nodes == {"Root", "Node1", "Node2"}
 
     story = parse_story_structure(
         get_test_data_from_json_file(
             "tests/unit/test_json/story_item_with_unrelated_references.json"
         )
     )
-    graph, root_node = parse_graph(story)
-    assert graph == {"Root": ["Node1", "Node2", "Node3"]}
-    assert root_node == "Root"
+    graph, exit_nodes = parse_graph(story)
+    assert graph == {
+        "Node1": ["Root"],
+        "Node2": ["Root"],
+        "Node3": ["Root"],
+    }
+    assert exit_nodes == set()
 
     story = parse_story_structure(
         get_test_data_from_json_file(
             "tests/unit/test_json/story_item_without_node_options.json"
         )
     )
-    graph, root_node = parse_graph(story)
-    assert graph == {"Root": ["Node1", "Node2"], "Node1": [], "Node2": []}
-    assert root_node == "Root"
+    graph, exit_nodes = parse_graph(story)
+    assert graph == {"Node1": ["Root"], "Node2": ["Root"]}
+    assert exit_nodes == {"Node1", "Node2"}
 
     story = parse_story_structure(
         get_test_data_from_json_file(
             "tests/unit/test_json/story_item_changed_default_root_node.json"
         )
     )
-    graph, root_node = parse_graph(story)
-    assert graph == {"Node1": ["Node2", None], "Node2": [None, None]}
-    assert root_node == "Node1"
+    graph, exit_nodes = parse_graph(story)
+    assert graph == {"Node2": ["Node1"]}
+    assert exit_nodes == {"Node1", "Node2"}

@@ -192,7 +192,7 @@ def cycle_story_graphs():
         (
             {
                 "Node1": ["Node2", "Node3"],
-                "Node2": ["Node5", "Node6"],
+                "Node2": ["Node6"],
                 "Node3": ["Node4", "Node5"],
                 "Node4": ["Node5", "Node3"],
                 "Node5": ["Node3", "Node4"],
