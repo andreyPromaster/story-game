@@ -30,8 +30,7 @@ class DataDriver(abc.ABC):
         Validate and create story item
         """
         validated_story_data = parse_story_structure(data)
-        graph, root_node = parse_graph(validated_story_data)
-        self._validate_story_item(graph, root_node)
+        self.validate_story_item(validated_story_data)
         self._create_story(validated_story_data)
         return validated_story_data
 
@@ -42,8 +41,10 @@ class DataDriver(abc.ABC):
         """
 
     @staticmethod
-    def _validate_story_item(story_data, root_node):
-        is_existing_root_node(story_data, root_node)
-        is_existing_unconnected_node(story_data, root_node)
-        is_existing_unrelated_reference(story_data)
-        is_existing_graph_cycle(story_data, root_node)
+    def validate_story_item(validated_story_data):
+        graph, exit_nodes = parse_graph(validated_story_data)
+        root_node = validated_story_data.root
+        is_existing_root_node(validated_story_data)
+        is_existing_unconnected_node(graph, root_node)
+        is_existing_unrelated_reference(graph)  # FIXME
+        is_existing_graph_cycle(graph, exit_nodes)

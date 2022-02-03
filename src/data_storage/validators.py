@@ -1,16 +1,12 @@
-import logging
-from itertools import chain
 from typing import DefaultDict
 
+from common.entities.schemas import StoryItem
 from utilities.exceptions import (
     ExistsCircleValidationError,
     RootDoesNotExistValidationError,
     UnconnectedNodeValidationError,
     UnrelatedReferenceValidationError,
 )
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("test")
 
 
 def is_existing_graph_cycle(graph: DefaultDict[str, list], exit_nodes: set):
@@ -40,19 +36,18 @@ def is_existing_graph_cycle(graph: DefaultDict[str, list], exit_nodes: set):
         raise ExistsCircleValidationError
 
 
-def is_existing_root_node(graph, root_node):
-    if root_node not in graph.keys():
+def is_existing_root_node(story_data: StoryItem):
+    if story_data.root not in story_data.nodes.keys():
         raise RootDoesNotExistValidationError(
-            f"Provided {root_node} root node does not exist"
+            f"Provided {story_data.root} root node does not exist"
         )
 
 
 def is_existing_unconnected_node(graph, root_node):
     """Root is one possible node that does not have any references"""
-    references = set(chain.from_iterable(graph.values()))
-    for node in graph.keys():
-        if node not in references and node != root_node:
-            raise UnconnectedNodeValidationError
+    nodes = [key for key, node in graph.items() if node and key != root_node]
+    if nodes:
+        raise UnconnectedNodeValidationError
 
 
 def is_existing_unrelated_reference(graph):
