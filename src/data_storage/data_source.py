@@ -45,6 +45,6 @@ class DataDriver(abc.ABC):
         graph, exit_nodes = parse_graph(validated_story_data)
         root_node = validated_story_data.root
         is_existing_root_node(validated_story_data)
-        is_existing_unconnected_node(graph, root_node)
-        is_existing_unrelated_reference(graph)  # FIXME
+        is_existing_unconnected_node(graph, root_node, exit_nodes)
+        is_existing_unrelated_reference(graph)
         is_existing_graph_cycle(graph, exit_nodes)

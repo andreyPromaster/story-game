@@ -21,8 +21,8 @@ class ExistsCircleValidationError(ValidationError):
 
 
 class UnconnectedNodeValidationError(ValidationError):
-    def __init__(self, message):
-        super().__init__(message="The story has unused node")
+    def __init__(self, message="The story has unused node"):
+        super().__init__(message)
 
 
 class UnrelatedReferenceValidationError(ValidationError):
