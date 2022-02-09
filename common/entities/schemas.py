@@ -33,7 +33,7 @@ class Story(BaseModel):
     @validator("id")
     def id_length(cls, v):
         UUID_LENGTH = 36
-        assert len(v) < UUID_LENGTH, "length must be less than 36 symbols"
+        assert len(v) <= UUID_LENGTH, "length must be less than 36 symbols"
         return v
 
     class Config:
