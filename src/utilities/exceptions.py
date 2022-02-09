@@ -5,31 +5,32 @@ class DynamoDBError(Exception):
 class ValidationError(Exception):
     """Exception class which represents a different story validation errors"""
 
-    def __init__(self, message):
-        self.message = message
-        super().__init__(message)
-
 
 class RootDoesNotExistValidationError(ValidationError):
-    def __init__(self, message="The provided root node does not exist"):
-        super().__init__(message)
+    def __init__(self, *args):
+        MESSAGE = "The provided root node does not exist"
+        super().__init__(args[0] if args else MESSAGE)
 
 
 class ExistsCircleValidationError(ValidationError):
-    def __init__(self, message="The story branch has no end"):
-        super().__init__(message)
+    def __init__(self, *args):
+        MESSAGE = "The story branch has no end"
+        super().__init__(args[0] if args else MESSAGE)
 
 
 class UnconnectedNodeValidationError(ValidationError):
-    def __init__(self, message="The story has unused node"):
-        super().__init__(message)
+    def __init__(self, *args):
+        MESSAGE = "The story has unused node"
+        super().__init__(args[0] if args else MESSAGE)
 
 
 class UnrelatedReferenceValidationError(ValidationError):
-    def __init__(self, message="The story node has link to uncreated branch"):
-        super().__init__(message)
+    def __init__(self, *args):
+        MESSAGE = "The story node has link to uncreated branch"
+        super().__init__(args[0] if args else MESSAGE)
 
 
 class ParseGraphError(ValidationError):
-    def __init__(self, message="The story item has unsupported structure"):
-        super().__init__(message)
+    def __init__(self, *args):
+        MESSAGE = "The story item has unsupported structure"
+        super().__init__(args[0] if args else MESSAGE)

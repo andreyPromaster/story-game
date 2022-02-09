@@ -16,18 +16,20 @@ def get_story(story_id):
         abort(404)
 
 
-@story_api.route("/stories", methods=["GET", "POST"])
-def create_or_get_list_story():
-    if request.method == "POST":
-        data = request.get_json()
-        try:
-            saved_data = data_source.create_story(data)
-        except ValidationError as e:
-            return jsonify(e.message), 400
-        return jsonify(saved_data.dict()), 201
-    if request.method == "GET":
-        stories = data_source.get_story_list()
-        return jsonify(stories.dict())
+@story_api.route("/stories", methods=["POST"])
+def create_story():
+    data = request.get_json()
+    try:
+        saved_data = data_source.create_story(data)
+    except ValidationError as e:
+        return jsonify({"detail": str(e)}), 400
+    return jsonify(saved_data.dict()), 201
+
+
+@story_api.route("/stories", methods=["GET"])
+def get_list_story():
+    stories = data_source.get_story_list()
+    return jsonify(stories.dict())
 
 
 @story_api.route("/stories/<string:story_id>/nodes/<string:uri>", methods=["GET"])
