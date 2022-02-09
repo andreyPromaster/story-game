@@ -43,21 +43,27 @@ def is_existing_root_node(story_data: StoryItem):
         )
 
 
-def is_existing_unconnected_node(graph, root_node, exit_nodes: set):
-    """Root is one possible node that does not have any references"""
-    is_valid = any((node or key == root_node) for key, node in graph.items())
-    if not is_valid:
-        raise UnconnectedNodeValidationError
-    elif not exit_nodes.issubset(graph.keys()):
+# FIX ME
+def is_existing_unconnected_node(nodes: set, references: set, exit_nodes: set):
+    references.update(exit_nodes)
+    if not nodes.issubset(references):
         raise UnconnectedNodeValidationError
 
+    # is_valid = any((node or key == root_node) for key, node in graph.items())
+    # if is_valid:
+    #     references = set(graph.keys())
+    #     if not exit_nodes.issubset(references):
+    #         raise UnconnectedNodeValidationError
+    # else:
+    #     raise UnconnectedNodeValidationError
 
-def is_existing_unrelated_reference(graph):
-    nodes = set(graph.keys())
+
+def is_existing_unrelated_reference(graph, nodes, exit_nodes: set):
+    nodes = set(nodes)
     unique_references = set()
     for references in graph.values():
-        for reference in references:
-            unique_references.add(reference)
+        unique_references.update(references)
 
-    if nodes != unique_references:
+    if not unique_references.issubset(nodes):
         raise UnrelatedReferenceValidationError
+    is_existing_unconnected_node(nodes, unique_references, exit_nodes)

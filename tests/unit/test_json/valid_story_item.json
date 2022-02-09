@@ -1,0 +1,29 @@
+{
+  "root": "Root",
+  "name": "test_story",
+  "nodes": {
+    "Root": {
+      "options": [
+        {
+          "text": "br1"
+        },
+        {
+          "next": "Root1",
+          "text": "br2"
+        }
+      ],
+      "text": "root"
+    },
+    "Root1": {
+      "options": [
+        {
+          "text": "br1"
+        },
+        {
+          "text": "br2"
+        }
+      ],
+      "text": "root1"
+    }
+  }
+}
