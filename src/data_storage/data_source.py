@@ -4,6 +4,7 @@ from common.entities.schemas import Node, Story, StoryList
 from data_storage.validators import (
     is_existing_graph_cycle,
     is_existing_root_node,
+    is_existing_unconnected_node,
     is_existing_unrelated_reference,
 )
 from utilities.functools import parse_graph, parse_story_structure
@@ -43,7 +44,8 @@ class DataDriver(abc.ABC):
     def validate_story_item(validated_story_data):
         graph, exit_nodes = parse_graph(validated_story_data)
         is_existing_root_node(validated_story_data)
-        is_existing_unrelated_reference(
-            graph, validated_story_data.nodes.keys(), exit_nodes
+        is_existing_unrelated_reference(graph, validated_story_data.nodes.keys())
+        is_existing_unconnected_node(
+            graph, validated_story_data.nodes.keys(), validated_story_data.root
         )
         is_existing_graph_cycle(graph, exit_nodes)

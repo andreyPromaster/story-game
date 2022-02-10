@@ -63,3 +63,11 @@ def test_validate_story_item():
     )
     with pytest.raises(UnconnectedNodeValidationError):
         DataDriver.validate_story_item(story)
+
+    story = parse_story_structure(
+        get_test_data_from_json_file(
+            "tests/unit/test_json/story_item_with_group_unconnected_nodes.json"
+        )
+    )
+    with pytest.raises(UnconnectedNodeValidationError):
+        DataDriver.validate_story_item(story)

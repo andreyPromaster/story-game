@@ -44,21 +44,15 @@ def is_existing_root_node(story_data: StoryItem):
 
 
 # FIX ME
-def is_existing_unconnected_node(nodes: set, references: set, exit_nodes: set):
-    references.update(exit_nodes)
-    if not nodes.issubset(references):
-        raise UnconnectedNodeValidationError
-
-    # is_valid = any((node or key == root_node) for key, node in graph.items())
-    # if is_valid:
-    #     references = set(graph.keys())
-    #     if not exit_nodes.issubset(references):
-    #         raise UnconnectedNodeValidationError
-    # else:
-    #     raise UnconnectedNodeValidationError
+def is_existing_unconnected_node(graph, parsed_nodes, root_node):
+    """Алгоритм проверки связности графа G"""
+    referred_nodes = graph.keys()
+    for node in parsed_nodes:
+        if node not in referred_nodes and node != root_node:
+            raise UnconnectedNodeValidationError
 
 
-def is_existing_unrelated_reference(graph, nodes, exit_nodes: set):
+def is_existing_unrelated_reference(graph, nodes):
     nodes = set(nodes)
     unique_references = set()
     for references in graph.values():
@@ -66,4 +60,3 @@ def is_existing_unrelated_reference(graph, nodes, exit_nodes: set):
 
     if not unique_references.issubset(nodes):
         raise UnrelatedReferenceValidationError
-    is_existing_unconnected_node(nodes, unique_references, exit_nodes)
