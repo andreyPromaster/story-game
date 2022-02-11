@@ -3,6 +3,7 @@ from typing import DefaultDict
 from common.entities.schemas import StoryItem
 from utilities.exceptions import (
     ExistsCircleValidationError,
+    ParseGraphError,
     RootDoesNotExistValidationError,
     UnconnectedNodeValidationError,
     UnrelatedReferenceValidationError,
@@ -43,13 +44,36 @@ def is_existing_root_node(story_data: StoryItem):
         )
 
 
-# FIX ME
-def is_existing_unconnected_node(graph, parsed_nodes, root_node):
-    """Алгоритм проверки связности графа G"""
-    referred_nodes = graph.keys()
-    for node in parsed_nodes:
-        if node not in referred_nodes and node != root_node:
-            raise UnconnectedNodeValidationError
+# Refactor me
+def is_existing_unconnected_node(story_item: StoryItem):
+    def parse_graph():
+        try:
+            nodes = story_item.nodes
+            graph_ = {}
+            for key, options in nodes.items():
+                graph_[key] = [option.next for option in options.options]
+            return graph_
+        except KeyError as e:
+            raise ParseGraphError(str(e)) from e
+
+    graph = parse_graph()
+    visited = set()
+
+    def dfs(node):
+        visited.add(node)
+        references = graph.get(node)
+
+        if references is None:
+            raise UnrelatedReferenceValidationError
+
+        for reference in references:
+            if reference not in visited and reference is not None:
+                dfs(reference)
+
+    dfs(story_item.root)
+
+    if graph.keys() != visited:
+        raise UnconnectedNodeValidationError
 
 
 def is_existing_unrelated_reference(graph, nodes):

@@ -7,6 +7,7 @@ from utilities.exceptions import (
     ExistsCircleValidationError,
     RootDoesNotExistValidationError,
     UnconnectedNodeValidationError,
+    UnrelatedReferenceValidationError,
     ValidationError,
 )
 from utilities.functools import parse_story_structure
@@ -33,7 +34,7 @@ def test_validate_story_item():
             "tests/unit/test_json/story_item_with_unrelated_references.json"
         )
     )
-    with pytest.raises(ValidationError):
+    with pytest.raises(UnrelatedReferenceValidationError):
         DataDriver.validate_story_item(story)
 
     story = parse_story_structure(
