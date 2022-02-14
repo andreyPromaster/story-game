@@ -6,7 +6,13 @@ from sqlalchemy.orm import sessionmaker
 
 from common.entities import schemas
 from data_storage.data_source import DataDriver
-from data_storage.sqlalchemy.models import Node, Option, Story, get_connection_engine
+from data_storage.sqlalchemy.models import (
+    Node,
+    Option,
+    Story,
+    StoryRoot,
+    get_connection_engine,
+)
 
 logging.basicConfig()
 logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
@@ -42,19 +48,22 @@ class RDSDriver(DataDriver):
         else:
             self.session = session
 
+    # FIX ME
     @handle_exception
     @execute_query
     def get_story(self, story_id: str):
         story = (
-            self.session.query(Story.id, Story.name, Node.name.label("root"))
-            .join(Node, isouter=True)
+            self.session.query(Story)
             .filter(
                 Story.id == story_id,
-                Node.name == "Root",
             )
             .one()
         )
-        return schemas.Story.from_orm(story)
+        root_node = (
+            self.session.query(StoryRoot).filter(StoryRoot.story == story_id).one()
+        )
+        node = self.session.query(Node.name).filter(Node.id == root_node.node).one()
+        return schemas.Story(id=story.id, root=node.name, name=story.name)
 
     @handle_exception
     @execute_query
@@ -83,8 +92,8 @@ class RDSDriver(DataDriver):
     def get_story_list(self):
         stories = (
             self.session.query(Story.id, Story.name, Node.name.label("root"))
-            .join(Node, isouter=True)
-            .filter(Node.name == "Root")
+            .join(StoryRoot, Story.id == StoryRoot.story, isouter=True)
+            .join(Node, StoryRoot.node == Node.id, isouter=True)
             .all()
         )
         return schemas.StoryList(stories=stories)
@@ -97,13 +106,13 @@ class RDSDriver(DataDriver):
         savepoint.commit()
 
         savepoint = self.session.begin_nested()
+        story_root = StoryRoot(story=story.id)
+        self.session.add(story_root)
+        savepoint.commit()
+
+        savepoint = self.session.begin_nested()
         nodes = [
-            Node(
-                story=story.id,
-                name=node_name,
-                text=node_data.text,
-                is_root=node_name == data.root,
-            )
+            Node(story=story.id, name=node_name, text=node_data.text)
             for node_name, node_data in data.nodes.items()
         ]
         self.session.add_all(nodes)
