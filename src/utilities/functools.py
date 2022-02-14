@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import DefaultDict
+from typing import DefaultDict, Dict, List
 
 from pydantic import ValidationError
 
@@ -16,10 +16,24 @@ def parse_story_structure(data: dict):
         raise ParseGraphError(e.errors()) from e
 
 
+def parse_graph_as_incidence_matrix(story_item: StoryItem) -> Dict[str, List]:
+    """
+    Key is node name, list contains nodes references to others node
+    """
+    try:
+        nodes = story_item.nodes
+        graph = {}
+        for key, options in nodes.items():
+            graph[key] = [option.next for option in options.options]
+        return graph
+    except KeyError as e:
+        raise ParseGraphError(str(e)) from e
+
+
 def parse_graph(story_item: StoryItem) -> tuple[DefaultDict[str, list], set]:
     """
     Function that represent users story like a graph.
-    Key is node name, list is reference to this node.
+    Key is node name, list contains references to this node.
     """
     try:
         graph = defaultdict(list)

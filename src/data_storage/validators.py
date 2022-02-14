@@ -3,11 +3,11 @@ from typing import DefaultDict
 from common.entities.schemas import StoryItem
 from utilities.exceptions import (
     ExistsCircleValidationError,
-    ParseGraphError,
     RootDoesNotExistValidationError,
     UnconnectedNodeValidationError,
     UnrelatedReferenceValidationError,
 )
+from utilities.functools import parse_graph_as_incidence_matrix
 
 
 def is_existing_graph_cycle(graph: DefaultDict[str, list], exit_nodes: set):
@@ -44,19 +44,8 @@ def is_existing_root_node(story_data: StoryItem):
         )
 
 
-# Refactor me
-def is_existing_unconnected_node(story_item: StoryItem):
-    def parse_graph():
-        try:
-            nodes = story_item.nodes
-            graph_ = {}
-            for key, options in nodes.items():
-                graph_[key] = [option.next for option in options.options]
-            return graph_
-        except KeyError as e:
-            raise ParseGraphError(str(e)) from e
-
-    graph = parse_graph()
+def is_existing_disconnected_graph_components(story_item: StoryItem):
+    graph = parse_graph_as_incidence_matrix(story_item)
     visited = set()
 
     def dfs(node):
@@ -74,13 +63,3 @@ def is_existing_unconnected_node(story_item: StoryItem):
 
     if graph.keys() != visited:
         raise UnconnectedNodeValidationError
-
-
-def is_existing_unrelated_reference(graph, nodes):
-    nodes = set(nodes)
-    unique_references = set()
-    for references in graph.values():
-        unique_references.update(references)
-
-    if not unique_references.issubset(nodes):
-        raise UnrelatedReferenceValidationError
