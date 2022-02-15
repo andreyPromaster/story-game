@@ -60,9 +60,11 @@ class RDSDriver(DataDriver):
             .one()
         )
         root_node = (
-            self.session.query(StoryRoot).filter(StoryRoot.story == story_id).one()
+            self.session.query(StoryRoot.node)
+            .filter(StoryRoot.story == story_id)
+            .scalar_subquery()
         )
-        node = self.session.query(Node.name).filter(Node.id == root_node.node).one()
+        node = self.session.query(Node.name).filter(Node.id == root_node).one()
         return schemas.Story(id=story.id, root=node.name, name=story.name)
 
     @handle_exception
