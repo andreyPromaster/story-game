@@ -33,7 +33,7 @@ def is_existing_graph_cycle(graph: DefaultDict[str, list], exit_nodes: set):
     for exit_node in exit_nodes:
         deep_first_search(exit_node)
 
-    if set(graph.keys()) != has_exit:
+    if graph.keys() != has_exit:
         raise ExistsCircleValidationError
 
 
