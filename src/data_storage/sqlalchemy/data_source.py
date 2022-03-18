@@ -100,6 +100,7 @@ class RDSDriver(DataDriver):
         )
         return schemas.StoryList(stories=stories)
 
+    # FIX ME
     @execute_query
     def _create_story(self, data: schemas.StoryItem):
         savepoint = self.session.begin_nested()

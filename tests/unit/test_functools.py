@@ -3,7 +3,11 @@ import pytest
 from common.entities.schemas import StoryItem
 from tests.test_helpers import get_test_data_from_json_file
 from utilities.exceptions import ParseGraphError
-from utilities.functools import parse_graph, parse_story_structure
+from utilities.functools import (
+    parse_graph,
+    parse_graph_as_incidence_matrix,
+    parse_story_structure,
+)
 
 
 def test_parse_story_structure(test_data):
@@ -68,3 +72,62 @@ def test_parse_graph():
     graph, exit_nodes = parse_graph(story)
     assert graph == {"Node2": ["Node1"]}
     assert exit_nodes == {"Node1", "Node2"}
+
+
+def test_parse_graph_as_incidence_matrix():
+    story = parse_story_structure(
+        get_test_data_from_json_file("tests/unit/test_json/valid_story.json")
+    )
+    graph = parse_graph_as_incidence_matrix(story)
+    assert graph == {
+        "Root": ["Node1", None],
+        "Node1": ["Node2", None],
+        "Node2": [None, "Root"],
+    }
+
+    story = parse_story_structure(
+        get_test_data_from_json_file(
+            "tests/unit/test_json/story_item_with_unrelated_references.json"
+        )
+    )
+    graph = parse_graph_as_incidence_matrix(story)
+    assert graph == {
+        "Root": ["Node1", "Node2", "Node3"],
+    }
+
+    story = parse_story_structure(
+        get_test_data_from_json_file(
+            "tests/unit/test_json/story_item_without_node_options.json"
+        )
+    )
+    graph = parse_graph_as_incidence_matrix(story)
+    assert graph == {
+        "Root": ["Node1", "Node2"],
+        "Node1": [],
+        "Node2": [],
+    }
+
+    story = parse_story_structure(
+        get_test_data_from_json_file(
+            "tests/unit/test_json/story_item_changed_default_root_node.json"
+        )
+    )
+    graph = parse_graph_as_incidence_matrix(story)
+    assert graph == {
+        "Node1": ["Node2", None],
+        "Node2": [None, None],
+    }
+
+    story = parse_story_structure(
+        get_test_data_from_json_file(
+            "tests/unit/test_json/story_item_with_group_unconnected_nodes.json"
+        )
+    )
+    graph = parse_graph_as_incidence_matrix(story)
+    assert graph == {
+        "Root": [None, "Root1"],
+        "Root1": [None, None],
+        "Node1": ["Node2"],
+        "Node2": ["Node3"],
+        "Node3": ["Node1", None],
+    }

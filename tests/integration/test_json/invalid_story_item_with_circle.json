@@ -1,0 +1,76 @@
+{
+  "root": "Node1",
+  "name": "test_story",
+  "nodes": {
+    "Node1": {
+      "options": [
+        {
+          "next": "Node2",
+          "text": "br2"
+        },
+        {
+          "next": "Node3",
+          "text": "br3"
+        }
+      ],
+      "text": "node1"
+    },
+    "Node2": {
+      "options": [
+        {
+          "next": "Node6",
+          "text": "br6"
+        },
+        {
+          "next": "Node5",
+          "text": "br5"
+        }
+      ],
+      "text": "node2"
+    },
+    "Node3": {
+      "options": [
+        {
+          "next": "Node5",
+          "text": "br3"
+        },
+        {
+          "next": "Node4",
+          "text": "br4"
+        }
+      ],
+      "text": "node3"
+    },
+    "Node4": {
+      "options": [
+        {
+          "next": "Node3",
+          "text": "br3"
+        },
+        {
+          "next": "Node5",
+          "text": "br5"
+        }
+      ],
+      "text": "node4"
+    },
+    "Node5": {
+      "options": [
+        {
+          "next": "Node3",
+          "text": "br3"
+        },
+        {
+          "next": "Node4",
+          "text": "br4"
+        }
+      ],
+      "text": "node5"
+    },
+    "Node6": {
+      "options": [
+      ],
+      "text": "node6"
+    }
+  }
+}
