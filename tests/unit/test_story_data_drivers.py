@@ -80,7 +80,6 @@ def test_create_story_rds_driver(mock_rds_driver):
     story_data = get_test_data_from_json_file(
         "tests/integration/test_json/valid_story_item.json"
     )
-    breakpoint()
     story = mock_rds_driver.create_story(story_data)
     assert story.id is not None
     assert story.root == story_data["root"]
