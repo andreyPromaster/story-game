@@ -1,8 +1,9 @@
 insert into story values (1, 'test_story');
-insert into node values (1, 1, 'Root', 'root');
-insert into node values (2, 1, 'Root1', 'root1');
-insert into story_root values (1,1,1);
-insert into option values (1, 2, 1, 'br1');
-insert into option values (2, null, 1, 'br2');
-insert into option values (3, null, 2, 'br3');
-insert into option values (4, null, 2, 'br4');
+insert into node values (DEFAULT, 1, 'Root', 'root'), (DEFAULT, 1, 'Root1', 'root1');
+insert into story_root (id, story, node) values (DEFAULT,1,1);
+insert into option values (DEFAULT, 2, 1, 'br1'), (DEFAULT, null, 1, 'br2'),
+                          (DEFAULT, null, 2, 'br3'), (DEFAULT, null, 2, 'br4');
+
+-- SELECT setval(pg_get_serial_sequence('story', 'id'), MAX(id)) FROM story;
+-- SELECT setval(pg_get_serial_sequence('node', 'id'), MAX(id)) FROM node;
+-- SELECT setval(pg_get_serial_sequence('option', 'id'), MAX(id)) FROM option;

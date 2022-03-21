@@ -48,7 +48,6 @@ class RDSDriver(DataDriver):
         else:
             self.session = session
 
-    # FIX ME
     @handle_exception
     @execute_query
     def get_story(self, story_id: str):
@@ -100,7 +99,6 @@ class RDSDriver(DataDriver):
         )
         return schemas.StoryList(stories=stories)
 
-    # FIX ME
     @execute_query
     def _create_story(self, data: schemas.StoryItem):
         savepoint = self.session.begin_nested()
@@ -109,16 +107,17 @@ class RDSDriver(DataDriver):
         savepoint.commit()
 
         savepoint = self.session.begin_nested()
-        story_root = StoryRoot(story=story.id)
-        self.session.add(story_root)
-        savepoint.commit()
-
-        savepoint = self.session.begin_nested()
         nodes = [
             Node(story=story.id, name=node_name, text=node_data.text)
             for node_name, node_data in data.nodes.items()
         ]
         self.session.add_all(nodes)
+        savepoint.commit()
+
+        savepoint = self.session.begin_nested()
+        root_node = list(filter(lambda node: node.name == data.root, nodes))[0]
+        story_root = StoryRoot(story=story.id, node=root_node.id)
+        self.session.add(story_root)
         savepoint.commit()
 
         savepoint = self.session.begin_nested()

@@ -80,6 +80,7 @@ def test_create_story_rds_driver(mock_rds_driver):
     story_data = get_test_data_from_json_file(
         "tests/integration/test_json/valid_story_item.json"
     )
+    breakpoint()
     story = mock_rds_driver.create_story(story_data)
     assert story.id is not None
     assert story.root == story_data["root"]
@@ -89,15 +90,23 @@ def test_create_story_rds_driver(mock_rds_driver):
         .filter(models.Story.id == story.id)
         .one()
     )
-
+    assert story_rds.id == story.id
     assert story_rds.name == story_data["name"]
     story_nodes_rds = (
-        mock_rds_driver.session.query(Node)
+        mock_rds_driver.session.query(models.Node)
         .filter(models.Node.story == story.id)
         .all()
-        .join(models.Node, models.Option.cur_node == Node.id, isouter=True)
     )
     assert len(story_nodes_rds) == 4
+
+    story_options_rds = (
+        mock_rds_driver.session.query(models.Option)
+        .filter(
+            models.Option.cur_node.in_(list(map(lambda node: node.id, story_nodes_rds)))
+        )
+        .all()
+    )
+    assert len(story_options_rds) == 7
 
 
 @pytest.mark.parametrize(
