@@ -4,7 +4,7 @@ from contextlib import contextmanager
 import pytest
 
 
-def get_test_data_from_json_file(filename):
+def load_json(filename):
     with open(filename, "r") as file:
         test_data = json.load(file)
     return test_data

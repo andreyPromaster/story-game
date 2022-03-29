@@ -5,7 +5,7 @@ from boto3.dynamodb.conditions import Key
 
 from common.entities.schemas import Node
 from data_storage.sqlalchemy import models
-from tests.test_helpers import get_test_data_from_json_file
+from tests.helpers import load_json
 from utilities.exceptions import DynamoDBError, ValidationError
 
 
@@ -63,9 +63,7 @@ def test_get_story_list(data_driver, test_data):
 
 
 def test_create_story_dynamodb_driver(mock_dynamodb_driver):
-    story_data = get_test_data_from_json_file(
-        "tests/integration/test_json/valid_story_item.json"
-    )
+    story_data = load_json("tests/integration/test_json/valid_story_item.json")
     story = mock_dynamodb_driver.create_story(story_data)
     assert story.id is not None
     assert story.root == story_data["root"]
@@ -77,9 +75,7 @@ def test_create_story_dynamodb_driver(mock_dynamodb_driver):
 
 
 def test_create_story_rds_driver(mock_rds_driver):
-    story_data = get_test_data_from_json_file(
-        "tests/integration/test_json/valid_story_item.json"
-    )
+    story_data = load_json("tests/integration/test_json/valid_story_item.json")
     story = mock_rds_driver.create_story(story_data)
     assert story.id is not None
     assert story.root == story_data["root"]
@@ -112,7 +108,7 @@ def test_create_story_rds_driver(mock_rds_driver):
     "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
 )
 def test_create_failed_story(data_driver):
-    story_data = get_test_data_from_json_file(
+    story_data = load_json(
         "tests/integration/test_json/invalid_story_item_with_circle.json"
     )
     with pytest.raises(ValidationError):
