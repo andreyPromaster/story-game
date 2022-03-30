@@ -1,6 +1,7 @@
 import pytest
 
 from common.entities.schemas import StoryItem
+from tests.constants import PARSED_STORY_GRAPH, PARSED_STORY_GRAPH_AS_INCIDENCE_MATRIX
 from tests.helpers import load_json
 from utilities.exceptions import ParseGraphError
 from utilities.functools import (
@@ -26,86 +27,20 @@ def test_parse_story_structure_with_invalid_data(test_story_file):
         parse_story_structure(load_json(test_story_file))
 
 
-def test_parse_graph():
-    story = parse_story_structure(load_json("tests/unit/test_json/valid_story.json"))
+@pytest.mark.parametrize(
+    "test_json, expected_graph, expected_exit_nodes", PARSED_STORY_GRAPH
+)
+def test_parse_graph(test_json, expected_graph, expected_exit_nodes):
+    story = parse_story_structure(load_json(test_json))
     graph, exit_nodes = parse_graph(story)
-    assert graph == {
-        "Root": ["Node2"],
-        "Node1": ["Root"],
-        "Node2": ["Node1"],
-    }
-    assert exit_nodes == {"Root", "Node1", "Node2"}
-
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_with_unrelated_references.json")
-    )
-    graph, exit_nodes = parse_graph(story)
-    assert graph == {
-        "Node1": ["Root"],
-        "Node2": ["Root"],
-        "Node3": ["Root"],
-    }
-    assert exit_nodes == set()
-
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_without_node_options.json")
-    )
-    graph, exit_nodes = parse_graph(story)
-    assert graph == {"Node1": ["Root"], "Node2": ["Root"]}
-    assert exit_nodes == {"Node1", "Node2"}
-
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_changed_default_root_node.json")
-    )
-    graph, exit_nodes = parse_graph(story)
-    assert graph == {"Node2": ["Node1"]}
-    assert exit_nodes == {"Node1", "Node2"}
+    assert graph == expected_graph
+    assert exit_nodes == expected_exit_nodes
 
 
-def test_parse_graph_as_incidence_matrix():
-    story = parse_story_structure(load_json("tests/unit/test_json/valid_story.json"))
+@pytest.mark.parametrize(
+    "test_json, expected_graph", PARSED_STORY_GRAPH_AS_INCIDENCE_MATRIX
+)
+def test_parse_graph_as_incidence_matrix(test_json, expected_graph):
+    story = parse_story_structure(load_json(test_json))
     graph = parse_graph_as_incidence_matrix(story)
-    assert graph == {
-        "Root": ["Node1", None],
-        "Node1": ["Node2", None],
-        "Node2": [None, "Root"],
-    }
-
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_with_unrelated_references.json")
-    )
-    graph = parse_graph_as_incidence_matrix(story)
-    assert graph == {
-        "Root": ["Node1", "Node2", "Node3"],
-    }
-
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_without_node_options.json")
-    )
-    graph = parse_graph_as_incidence_matrix(story)
-    assert graph == {
-        "Root": ["Node1", "Node2"],
-        "Node1": [],
-        "Node2": [],
-    }
-
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_changed_default_root_node.json")
-    )
-    graph = parse_graph_as_incidence_matrix(story)
-    assert graph == {
-        "Node1": ["Node2", None],
-        "Node2": [None, None],
-    }
-
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_with_group_unconnected_nodes.json")
-    )
-    graph = parse_graph_as_incidence_matrix(story)
-    assert graph == {
-        "Root": [None, "Root1"],
-        "Root1": [None, None],
-        "Node1": ["Node2"],
-        "Node2": ["Node3"],
-        "Node3": ["Node1", None],
-    }
+    assert graph == expected_graph
