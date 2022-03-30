@@ -1,3 +1,4 @@
+from collections import deque
 from typing import DefaultDict
 
 from common.entities.schemas import StoryItem
@@ -23,12 +24,14 @@ def is_existing_graph_cycle(graph: DefaultDict[str, list], exit_nodes: set):
     has_exit = set()
 
     def deep_first_search(current_vertex):
+        stack = deque()
+        stack.append(current_vertex)
+        while stack:
+            node = stack.pop()
+            has_exit.add(node)
 
-        has_exit.add(current_vertex)
-
-        for node in graph[current_vertex]:
-            if node not in has_exit:
-                deep_first_search(node)
+            options = set(graph[node]) - has_exit
+            stack.extend(options)
 
     for exit_node in exit_nodes:
         deep_first_search(exit_node)
@@ -48,16 +51,19 @@ def is_existing_disconnected_graph_components(story_item: StoryItem):
     graph = parse_graph_as_incidence_matrix(story_item)
     visited = set()
 
-    def dfs(node):
-        visited.add(node)
-        references = graph.get(node)
+    def dfs(current_vertex):
+        stack = deque()
+        stack.append(current_vertex)
+        while stack:
+            node = stack.pop()
+            visited.add(node)
 
-        if references is None:
-            raise UnrelatedReferenceValidationError
+            references = graph.get(node)
+            if references is None:
+                raise UnrelatedReferenceValidationError
 
-        for reference in references:
-            if reference not in visited and reference is not None:
-                dfs(reference)
+            options = set(filter(lambda item: item is not None, references)) - visited
+            stack.extend(options)
 
     dfs(story_item.root)
 
