@@ -8,10 +8,14 @@ from data_storage.sqlalchemy import models
 from tests.helpers import load_json
 from utilities.exceptions import DynamoDBError, ValidationError
 
+DEFAULT_DRIVERS = ["mock_dynamodb_driver", "mock_rds_driver"]
 
-@pytest.mark.parametrize(
-    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
-)
+
+def with_drivers(drivers):
+    return pytest.mark.parametrize("data_driver", drivers, indirect=True)
+
+
+@with_drivers(drivers=DEFAULT_DRIVERS)
 def test_get_story(data_driver, test_data):
     story = data_driver.get_story("1")
     assert story.id == test_data["id"]
@@ -19,9 +23,7 @@ def test_get_story(data_driver, test_data):
     assert story.name == test_data["name"]
 
 
-@pytest.mark.parametrize(
-    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
-)
+@with_drivers(drivers=DEFAULT_DRIVERS)
 def test_get_not_exist_story(data_driver):
     story = data_driver.get_story("not_exist_id")
     assert story is None
@@ -36,25 +38,19 @@ def test_get_story_with_response_error(mock_dynamodb_driver):
         mock_dynamodb_driver.get_story("not_exist_id")
 
 
-@pytest.mark.parametrize(
-    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
-)
+@with_drivers(drivers=DEFAULT_DRIVERS)
 def test_get_node(data_driver, test_data):
     node = data_driver.get_node("1", "Root")
     assert Node(**test_data["nodes"]["Root"]) == node
 
 
-@pytest.mark.parametrize(
-    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
-)
+@with_drivers(drivers=DEFAULT_DRIVERS)
 def test_get_not_exist_node(data_driver):
     node = data_driver.get_node("1", "not_exist_id")
     assert node is None
 
 
-@pytest.mark.parametrize(
-    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
-)
+@with_drivers(drivers=DEFAULT_DRIVERS)
 def test_get_story_list(data_driver, test_data):
     stories = data_driver.get_story_list()
     assert stories.stories[0].id == test_data["id"]
@@ -104,9 +100,7 @@ def test_create_story_rds_driver(mock_rds_driver):
     assert len(story_options_rds) == 7
 
 
-@pytest.mark.parametrize(
-    "data_driver", ["mock_dynamodb_driver", "mock_rds_driver"], indirect=True
-)
+@with_drivers(drivers=DEFAULT_DRIVERS)
 def test_create_failed_story(data_driver):
     story_data = load_json(
         "tests/integration/test_json/invalid_story_item_with_circle.json"
