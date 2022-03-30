@@ -29,36 +29,51 @@ def test_story_has_branch_without_end():
             is_existing_graph_cycle(graph, exit_nodes)
 
 
-def test_validate_story_item():
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_with_unrelated_references.json")
-    )
+@pytest.mark.parametrize(
+    "test_data_json",
+    [
+        "tests/unit/test_json/story_item_with_unrelated_references.json",
+    ],
+)
+def test_validate_story_item_with_unrelated_reference(test_data_json):
+    story = parse_story_structure(load_json(test_data_json))
     with pytest.raises(UnrelatedReferenceValidationError):
         DataDriver.validate_story_item(story)
 
-    story = parse_story_structure(load_json("tests/unit/test_json/valid_story.json"))
+
+@pytest.mark.parametrize(
+    "test_data_json",
+    [
+        "tests/unit/test_json/valid_story.json",
+        "tests/unit/test_json/valid_story_item.json",
+    ],
+)
+def test_validate_story_item(test_data_json):
+    story = parse_story_structure(load_json(test_data_json))
     with not_raises(ValidationError):
         DataDriver.validate_story_item(story)
 
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/valid_story_item.json")
-    )
-    with not_raises(ValidationError):
-        DataDriver.validate_story_item(story)
 
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_without_root_node.json")
-    )
+@pytest.mark.parametrize(
+    "test_data_json",
+    [
+        "tests/unit/test_json/story_item_without_root_node.json",
+    ],
+)
+def test_validate_story_item_without_root_node(test_data_json):
+    story = parse_story_structure(load_json(test_data_json))
     with pytest.raises(RootDoesNotExistValidationError):
         DataDriver.validate_story_item(story)
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_with_unconnected_node.json")
-    )
-    with pytest.raises(UnconnectedNodeValidationError):
-        DataDriver.validate_story_item(story)
 
-    story = parse_story_structure(
-        load_json("tests/unit/test_json/story_item_with_group_unconnected_nodes.json")
-    )
+
+@pytest.mark.parametrize(
+    "test_data_json",
+    [
+        "tests/unit/test_json/story_item_with_unconnected_node.json",
+        "tests/unit/test_json/story_item_with_group_unconnected_nodes.json",
+    ],
+)
+def test_validate_story_item_with_unconnected_node(test_data_json):
+    story = parse_story_structure(load_json(test_data_json))
     with pytest.raises(UnconnectedNodeValidationError):
         DataDriver.validate_story_item(story)
