@@ -101,26 +101,22 @@ class RDSDriver(DataDriver):
 
     @execute_query
     def _create_story(self, data: schemas.StoryItem):
-        savepoint = self.session.begin_nested()
         story = Story(id=data.id, name=data.name)
         self.session.add(story)
-        savepoint.commit()
+        self.session.flush()
 
-        savepoint = self.session.begin_nested()
         nodes = {
             node_name: Node(story=story.id, name=node_name, text=node_data.text)
             for node_name, node_data in data.nodes.items()
         }
         self.session.add_all(list(nodes.values()))
-        savepoint.commit()
+        self.session.flush()
 
-        savepoint = self.session.begin_nested()
         root_node = nodes[data.root]
         story_root = StoryRoot(story=story.id, node=root_node.id)
         self.session.add(story_root)
-        savepoint.commit()
+        self.session.flush()
 
-        savepoint = self.session.begin_nested()
         options = []
         for node_name, node_data in data.nodes.items():
             for option in node_data.options:
@@ -133,4 +129,4 @@ class RDSDriver(DataDriver):
                 )
                 options.append(new_option)
         self.session.add_all(options)
-        savepoint.commit()
+        self.session.flush()
