@@ -53,13 +53,14 @@ def test_get_not_exist_node(data_driver):
 @with_drivers(drivers=DEFAULT_DRIVERS)
 def test_get_story_list(data_driver, test_data):
     stories = data_driver.get_story_list()
+    assert len(stories.stories) == 1
     assert stories.stories[0].id == test_data["id"]
     assert stories.stories[0].root == test_data["root"]
     assert stories.stories[0].name == test_data["name"]
 
 
 def test_create_story_dynamodb_driver(mock_dynamodb_driver):
-    story_data = load_json("tests/integration/test_json/valid_story_item.json")
+    story_data = load_json("tests/data/valid_story_item.json")
     story = mock_dynamodb_driver.create_story(story_data)
     assert story.id is not None
     assert story.root == story_data["root"]
@@ -71,7 +72,7 @@ def test_create_story_dynamodb_driver(mock_dynamodb_driver):
 
 
 def test_create_story_rds_driver(mock_rds_driver):
-    story_data = load_json("tests/integration/test_json/valid_story_item.json")
+    story_data = load_json("tests/data/valid_story_item.json")
     story = mock_rds_driver.create_story(story_data)
     assert story.id is not None
     assert story.root == story_data["root"]
@@ -90,20 +91,18 @@ def test_create_story_rds_driver(mock_rds_driver):
     )
     assert len(story_nodes_rds) == 4
 
-    story_options_rds = (
+    сount_story_options_rds = (
         mock_rds_driver.session.query(models.Option)
         .filter(
             models.Option.cur_node.in_(list(map(lambda node: node.id, story_nodes_rds)))
         )
-        .all()
+        .count()
     )
-    assert len(story_options_rds) == 7
+    assert сount_story_options_rds == 7
 
 
 @with_drivers(drivers=DEFAULT_DRIVERS)
 def test_create_failed_story(data_driver):
-    story_data = load_json(
-        "tests/integration/test_json/invalid_story_item_with_circle.json"
-    )
+    story_data = load_json("tests/data/invalid_story_item_with_circle.json")
     with pytest.raises(ValidationError):
         data_driver.create_story(story_data)

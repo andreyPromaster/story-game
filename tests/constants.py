@@ -1,29 +1,37 @@
+from typing import Dict, TypedDict
+
+
+class StoryItem(TypedDict):
+    graph: Dict[str, list]
+    exit_nodes: set
+
+
 VALID_STORY_ITEM = (
-    (
-        {
+    StoryItem(
+        graph={
             "Root": ["Node1"],
             "Node1": ["Root"],
         },
-        {"Root"},
+        exit_nodes={"Root"},
     ),
-    (
-        {
+    StoryItem(
+        graph={
             "Root": ["Node1"],
             "Node1": ["Root"],
         },
-        {"Node1"},
+        exit_nodes={"Node1"},
     ),
-    (
-        {
+    StoryItem(
+        graph={
             "Node1": [],
             "Node2": ["Node1"],
             "Node3": ["Node2", "Node1"],
             "Node4": ["Node1", "Node3"],
         },
-        {"Node2", "Node4"},
+        exit_nodes={"Node2", "Node4"},
     ),
-    (
-        {
+    StoryItem(
+        graph={
             "Node1": ["Node2"],
             "Node2": ["Node1", "Node6"],
             "Node3": ["Node1"],
@@ -31,21 +39,21 @@ VALID_STORY_ITEM = (
             "Node5": ["Node3"],
             "Node6": ["Node4"],
         },
-        {"Node5"},
+        exit_nodes={"Node5"},
     ),
 )
 
 CYCLE_STORY_GRAPHS = (
-    (
-        {
+    StoryItem(
+        graph={
             "Root": [],
             "Node1": ["Root", "Node2"],
             "Node2": ["Node1"],
         },
-        {},
+        exit_nodes=set(),
     ),
-    (
-        {
+    StoryItem(
+        graph={
             "Node1": ["Node2"],
             "Node2": ["Node1"],
             "Node3": ["Node1", "Node5"],
@@ -53,10 +61,10 @@ CYCLE_STORY_GRAPHS = (
             "Node5": ["Node3"],
             "Node6": ["Node4"],
         },
-        {"Node5"},
+        exit_nodes={"Node5"},
     ),
-    (
-        {
+    StoryItem(
+        graph={
             "Node1": [],
             "Node2": ["Node1"],
             "Node3": ["Node1", "Node5", "Node4"],
@@ -64,7 +72,7 @@ CYCLE_STORY_GRAPHS = (
             "Node5": ["Node3", "Node4"],
             "Node6": ["Node2"],
         },
-        {"Node6"},
+        exit_nodes={"Node6"},
     ),
 )
 PARSED_STORY_GRAPH = (

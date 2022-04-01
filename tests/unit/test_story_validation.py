@@ -15,18 +15,18 @@ from utilities.functools import parse_story_structure
 
 
 def test_not_exist_story_graph_cycle():
-    for graph, exit_nodes in VALID_STORY_ITEM:
+    for story_item in VALID_STORY_ITEM:
         with not_raises(
             ExistsCircleValidationError,
-            f"Graph is {graph}, exit nodes are {exit_nodes}.",
+            f"Graph is {story_item['graph']}, exit nodes are {story_item['exit_nodes']}.",
         ):
-            is_existing_graph_cycle(graph, exit_nodes)
+            is_existing_graph_cycle(story_item["graph"], story_item["exit_nodes"])
 
 
 def test_story_has_branch_without_end():
-    for graph, exit_nodes in CYCLE_STORY_GRAPHS:
+    for story_item in CYCLE_STORY_GRAPHS:
         with pytest.raises(ExistsCircleValidationError):
-            is_existing_graph_cycle(graph, exit_nodes)
+            is_existing_graph_cycle(story_item["graph"], story_item["exit_nodes"])
 
 
 @pytest.mark.parametrize(
