@@ -7,8 +7,6 @@ from alembic import context
 from models import Base
 from sqlalchemy import engine_from_config, pool
 
-from conf import settings
-
 config = context.config
 
 # Interpret the config file for Python logging.
@@ -58,6 +56,9 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+    from conf import RDSSettings
+
+    settings = RDSSettings()
     alembic_config = config.get_section(config.config_ini_section)
     alembic_config[
         "sqlalchemy.url"
@@ -69,7 +70,9 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection, target_metadata=target_metadata, compare_type=True
+        )
 
         with context.begin_transaction():
             context.run_migrations()

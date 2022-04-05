@@ -68,3 +68,8 @@ class DynamoDBDriver(DataDriver):
         if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
             raise DynamoDBError(json.dumps(response))
         return StoryList(stories=response["Items"])
+
+    def _create_story(self, data):
+        response = self.connection.put_item(Item=data.dict())
+        if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
+            raise DynamoDBError(json.dumps(response))

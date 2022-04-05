@@ -1,0 +1,14 @@
+{
+  "story": [{"id": 1, "name": "test_story"}],
+  "node": [
+    {"story": 1, "name": "Root", "text": "root"},
+    {"story": 1, "name": "Root1", "text": "root1"}
+  ],
+  "story_root": [{"story": 1, "node": 1}],
+  "option": [
+    {"next": 2, "cur_node": 1, "text": "br1"},
+    {"next": null, "cur_node": 1, "text": "br2"},
+    {"next": null, "cur_node": 2, "text": "br3"},
+    {"next": null, "cur_node": 2, "text": "br4"}
+  ]
+}

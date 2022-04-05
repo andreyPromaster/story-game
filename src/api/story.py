@@ -1,12 +1,13 @@
-from flask import Blueprint, abort, jsonify
+from flask import Blueprint, abort, jsonify, request
 
 from data_storage.connection import get_data_source
+from utilities.exceptions import ValidationError
 
 story_api = Blueprint("story_api_br", __name__)
 data_source = get_data_source()
 
 
-@story_api.route("/story/<string:story_id>")
+@story_api.route("/stories/<string:story_id>", methods=["GET"])
 def get_story(story_id):
     story = data_source.get_story(story_id=story_id)
     if story is not None:
@@ -15,13 +16,23 @@ def get_story(story_id):
         abort(404)
 
 
-@story_api.route("/story")
-def list_story():
+@story_api.route("/stories", methods=["POST"])
+def create_story():
+    data = request.get_json()
+    try:
+        saved_data = data_source.create_story(data)
+    except ValidationError as e:
+        return jsonify({"detail": str(e)}), 400
+    return jsonify(saved_data.dict()), 201
+
+
+@story_api.route("/stories", methods=["GET"])
+def get_list_story():
     stories = data_source.get_story_list()
     return jsonify(stories.dict())
 
 
-@story_api.route("/story/<string:story_id>/nodes/<string:uri>")
+@story_api.route("/stories/<string:story_id>/nodes/<string:uri>", methods=["GET"])
 def get_story_node(story_id, uri):
     node = data_source.get_node(story_id=story_id, uri=uri)
     if node is not None:

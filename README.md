@@ -47,7 +47,7 @@ LOCAL=0
 DB_HOST=RDS-host-name
 DB_PASS=RDS-password
 DB_USER=user
-DB_NAME=table-name
+DB_NAME=db-name
 ```
 After, run
 ```shell

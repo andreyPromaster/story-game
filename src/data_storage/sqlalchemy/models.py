@@ -1,5 +1,4 @@
 import json
-import logging
 from functools import partial
 
 from pydantic.json import pydantic_encoder
@@ -11,14 +10,13 @@ from conf import RDSSettings
 
 def get_connection_engine():
     # Setup Session and Client
-    logging.info("Getting database connection")
     rds_setting = RDSSettings()
     conn = create_engine(
         f"postgresql://{rds_setting.DB_USER}:{rds_setting.DB_PASS}@"
         f"{rds_setting.DB_HOST}:{rds_setting.DB_PORT}/{rds_setting.DB_NAME}",
         json_serializer=partial(json.dumps, default=pydantic_encoder),
+        echo=True,
     )
-    logging.info("Database connection established")
     return conn
 
 
@@ -30,8 +28,23 @@ Base = declarative_base(bind=engine)
 class Story(Base):
     __tablename__ = "story"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(36), primary_key=True)
     name = Column(String(200), nullable=False)
+
+
+class StoryRoot(Base):
+    __tablename__ = "story_root"
+
+    id = Column(Integer, primary_key=True)
+    story = Column(
+        String(36),
+        ForeignKey("story.id", ondelete="CASCADE"),
+        nullable=True,
+    )
+    node = Column(
+        Integer,
+        ForeignKey("node.id", ondelete="CASCADE"),
+    )
 
 
 class Node(Base):
@@ -39,7 +52,7 @@ class Node(Base):
 
     id = Column(Integer, primary_key=True)
     story = Column(
-        Integer,
+        String(36),
         ForeignKey("story.id", ondelete="CASCADE"),
         nullable=True,
     )

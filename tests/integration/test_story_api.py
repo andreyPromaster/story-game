@@ -5,7 +5,7 @@ def test_api_get_story_list(
         "api.story.data_source.get_story_list",
         return_value=mock_dynamodb_driver.get_story_list(),
     )
-    data = application_client.get("api/story")
+    data = application_client.get("api/stories")
     assert data.status_code == 200
     assert data.get_json() == {
         "stories": [
@@ -26,7 +26,7 @@ def test_api_get_story_node(
         "api.story.data_source.get_node",
         return_value=mock_dynamodb_driver.get_node(story_id, node_id),
     )
-    data = application_client.get(f"api/story/{story_id}/nodes/{node_id}")
+    data = application_client.get(f"api/stories/{story_id}/nodes/{node_id}")
     assert data.status_code == 200
     assert data.get_json() == {
         "options": [
@@ -45,7 +45,7 @@ def test_api_get_not_exist_story_node(
         "api.story.data_source.get_node",
         return_value=mock_dynamodb_driver.get_node(story_id, node_id),
     )
-    data = application_client.get(f"api/story/{story_id}/nodes/{node_id}")
+    data = application_client.get(f"api/stories/{story_id}/nodes/{node_id}")
     assert data.status_code == 404
 
 
@@ -55,7 +55,7 @@ def test_api_get_story(mocker, mock_dynamodb_driver, application_client, test_da
         "api.story.data_source.get_story",
         return_value=mock_dynamodb_driver.get_story(story_id),
     )
-    data = application_client.get(f"api/story/{story_id}")
+    data = application_client.get(f"api/stories/{story_id}")
     assert data.status_code == 200
     assert data.get_json() == {
         "id": "1",
@@ -72,5 +72,5 @@ def test_api_get_not_exist_story(
         "api.story.data_source.get_story",
         return_value=mock_dynamodb_driver.get_story(story_id),
     )
-    data = application_client.get(f"api/story/{story_id}")
+    data = application_client.get(f"api/stories/{story_id}")
     assert data.status_code == 404

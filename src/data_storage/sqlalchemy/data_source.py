@@ -6,7 +6,13 @@ from sqlalchemy.orm import sessionmaker
 
 from common.entities import schemas
 from data_storage.data_source import DataDriver
-from data_storage.sqlalchemy.models import Node, Option, Story, get_connection_engine
+from data_storage.sqlalchemy.models import (
+    Node,
+    Option,
+    Story,
+    StoryRoot,
+    get_connection_engine,
+)
 
 logging.basicConfig()
 logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
@@ -46,15 +52,19 @@ class RDSDriver(DataDriver):
     @execute_query
     def get_story(self, story_id: str):
         story = (
-            self.session.query(Story.id, Story.name, Node.name.label("root"))
-            .join(Node, isouter=True)
+            self.session.query(Story)
             .filter(
                 Story.id == story_id,
-                Node.name == "Root",
             )
             .one()
         )
-        return schemas.Story.from_orm(story)
+        root_node = (
+            self.session.query(StoryRoot.node)
+            .filter(StoryRoot.story == story_id)
+            .scalar_subquery()
+        )
+        node = self.session.query(Node.name).filter(Node.id == root_node).one()
+        return schemas.Story(id=story.id, root=node.name, name=story.name)
 
     @handle_exception
     @execute_query
@@ -83,8 +93,40 @@ class RDSDriver(DataDriver):
     def get_story_list(self):
         stories = (
             self.session.query(Story.id, Story.name, Node.name.label("root"))
-            .join(Node, isouter=True)
-            .filter(Node.name == "Root")
+            .join(StoryRoot, Story.id == StoryRoot.story, isouter=True)
+            .join(Node, StoryRoot.node == Node.id, isouter=True)
             .all()
         )
         return schemas.StoryList(stories=stories)
+
+    @execute_query
+    def _create_story(self, data: schemas.StoryItem):
+        story = Story(id=data.id, name=data.name)
+        self.session.add(story)
+        self.session.flush()
+
+        nodes = {
+            node_name: Node(story=story.id, name=node_name, text=node_data.text)
+            for node_name, node_data in data.nodes.items()
+        }
+        self.session.add_all(list(nodes.values()))
+        self.session.flush()
+
+        root_node = nodes[data.root]
+        story_root = StoryRoot(story=story.id, node=root_node.id)
+        self.session.add(story_root)
+        self.session.flush()
+
+        options = []
+        for node_name, node_data in data.nodes.items():
+            for option in node_data.options:
+                cur_node = nodes[node_name]
+                next_node = nodes.get(option.next)
+                new_option = Option(
+                    cur_node=cur_node.id,
+                    text=option.text,
+                    next=next_node.id if next_node else None,
+                )
+                options.append(new_option)
+        self.session.add_all(options)
+        self.session.flush()

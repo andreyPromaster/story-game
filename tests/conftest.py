@@ -1,17 +1,17 @@
-import json
 import os
 from unittest import mock
 
 import boto3
 import pytest
 from moto import mock_dynamodb2
-from sqlalchemy import event, text
+from sqlalchemy import MetaData, event, insert
 from sqlalchemy.orm import Session
 
 from app import app
 from data_storage.dynamo_db.data_source import DynamoDBDriver
 from data_storage.sqlalchemy.data_source import RDSDriver
 from data_storage.sqlalchemy.models import Base, get_connection_engine
+from tests.helpers import load_json
 
 
 @pytest.fixture(scope="session")
@@ -37,17 +37,20 @@ def aws_credentials():
     os.environ["AWS_SESSION_TOKEN"] = "testing"
 
 
-def load_test_sql_data(connection):
-    with open("tests/test_data.sql") as file:
-        query = text(file.read())
-        connection.execute(query)
+def load_test_data_to_rds(connection):
+    metadata_obj = MetaData()
+    metadata_obj.reflect(bind=connection)
+    data = load_json("tests/data/test_story_for_rds_driver.json")
+
+    for table_name in data.keys():
+        table = metadata_obj.tables[table_name]
+        for item in data[table_name]:
+            connection.execute(insert(table, return_defaults=True).values(**item))
 
 
 @pytest.fixture(scope="session")
 def test_data():
-    with open("tests/test_data.json", "r") as file:
-        test_data = json.load(file)
-    return test_data
+    return load_json("tests/data/test_story_for_dynamodb_driver.json")
 
 
 @pytest.fixture(scope="session")
@@ -64,10 +67,9 @@ def data_driver(request):
 def mock_rds_driver(engine, setup_db, request):
     connection = engine.connect()
 
-    load_test_sql_data(connection)
-
     transaction = connection.begin()
     session = Session(bind=connection)
+    load_test_data_to_rds(connection)
 
     @event.listens_for(session, "after_transaction_end")
     def restart_savepoint(db_session, transaction):

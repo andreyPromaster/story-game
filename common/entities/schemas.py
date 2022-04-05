@@ -1,6 +1,11 @@
-from typing import List, Optional
+from typing import Dict, List
+from uuid import uuid4
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
+
+
+def generate_uuid_as_str():
+    return str(uuid4())
 
 
 class Option(BaseModel):
@@ -17,16 +22,26 @@ class Node(BaseModel):
 
 
 class NodeList(BaseModel):
-    nodes: List[Node] = []
+    nodes: Dict[str, Node]
 
 
 class Story(BaseModel):
     id: str
-    root: Optional[str]
-    name: Optional[str]
+    root: str = "Root"
+    name: str
+
+    @validator("id")
+    def id_length(cls, v):
+        UUID_LENGTH = 36
+        assert len(v) <= UUID_LENGTH, "length must be less than 36 symbols"
+        return v
 
     class Config:
         orm_mode = True
+
+
+class StoryItem(Story, NodeList):
+    id: str = Field(default_factory=generate_uuid_as_str)
 
 
 class StoryList(BaseModel):
